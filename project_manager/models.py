@@ -7,7 +7,7 @@ class User(AbstractUser):
 
 class Project(models.Model):
     creator = models.ForeignKey("User", on_delete=models.CASCADE, related_name="projects")
-    name = models.CharField()
+    name = models.CharField(max_length=256)
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -19,12 +19,12 @@ class Task(models.Model):
     creator = models.ForeignKey("User", on_delete=models.CASCADE, related_name="tasks")
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="tasks")
     deadline = models.ForeignKey("Deadline", null=True, on_delete=models.SET_NULL, related_name="tasks")
-    title = models.CharField()
+    title = models.CharField(max_length=1024)
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
 
 class Authority(models.Model):
-    level = models.CharField()
+    level = models.CharField(max_length=16)
 
 class Membership(models.Model):
     member = models.ForeignKey("User", on_delete=models.CASCADE, related_name="memberships")
