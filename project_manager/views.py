@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from .models import User
 
 # Create your views here.
-
+@login_required
 def index(request):
     return render(request, "project_manager/index.html")
 
