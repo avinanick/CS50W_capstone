@@ -3,12 +3,26 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 
-from .models import User
+from .models import User, Project
 
 # Create your views here.
 @login_required
 def index(request):
     return render(request, "project_manager/index.html")
+
+@login_required
+def create_project(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    new_project = Project(
+        creator = request.user, 
+        name = data["project_name"], 
+        description=data["project_description"])
+
+    new_project.save()
+    return JsonResponse({"message": "Project created."}, status=201)
 
 def login_view(request):
     if request.method == "POST":
@@ -32,6 +46,10 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("login")
+
+@login_required
+def projects(request):
+    pass
 
 def register(request):
     if request.method == "POST":
