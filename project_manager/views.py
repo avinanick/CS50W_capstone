@@ -55,8 +55,12 @@ def logout_view(request):
 
 @login_required
 def projects(request):
+    user_memberships = Membership.objects.filter(member=request.user)
+    user_projects = []
+    for membership in user_memberships:
+        user_projects.append(membership.project)
     
-    pass
+    return JsonResponse({"projects":[project.name for project in user_projects]})
 
 def register(request):
     if request.method == "POST":
