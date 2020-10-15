@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 
-from .models import User, Project
+from .models import User, Project, Deadline, Task, Authority, Membership
 
 # Create your views here.
 @login_required
@@ -20,8 +20,14 @@ def create_project(request):
         creator = request.user, 
         name = data["project_name"], 
         description=data["project_description"])
-
     new_project.save()
+
+    new_membership = Membership(
+        project=new_project,
+        member=request.user,
+        auth_level=Authority.objects.get(level="Owner")
+    )
+    new_membership.save()
     return JsonResponse({"message": "Project created."}, status=201)
 
 def login_view(request):
@@ -49,6 +55,7 @@ def logout_view(request):
 
 @login_required
 def projects(request):
+    
     pass
 
 def register(request):
