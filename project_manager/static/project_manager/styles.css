@@ -1,0 +1,16 @@
+#create-project-overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 80%; /* Full width (cover the whole page) */
+    height: 80%; /* Full height (cover the whole page) */
+    top: 10%;
+    left: 10%;
+    right: 10%;
+    bottom: 10%;
+    background-color: white; /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    border: solid thin black;
+    border-radius: 10px;
+    padding: 10px;
+}
