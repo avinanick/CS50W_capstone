@@ -56,6 +56,17 @@
         <div id="create-project-overlay">
             <form action="#" id="create-project-form">
                 {% csrf_token %}
+                <!-- Need fields for the project name and description -->
+                <h3>New Project</h3>
+                <div class="form-group">
+                    <label for="project-name-input">Project Name</label>
+                    <input type="text" id="project-name-input" class="form-control" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label for="project-description-input">Project Description</label>
+                    <textarea class="form-control" id="project-description-input"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
         <div>
