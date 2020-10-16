@@ -8,10 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector("#project-cancel").addEventListener('click', function() {
         document.querySelector("#create-project-overlay").style.display = "none";
     });
+    document.querySelector("#create-project-form").addEventListener('submit', create_project);
+    refresh_project_list();
     
   });
 
-function create_project() {
+function create_project(event) {
+
+    event.preventDefault();
 
     const csrftoken = getCookie('csrftoken');
 
@@ -30,7 +34,17 @@ function create_project() {
     })
     .then(response => {
         console.log(response);
+        refresh_project_list();
     })
+
+}
+
+function create_project_link_element(project_name, project_id) {
+
+    let project_link = document.createElement('a');
+
+    project_link.setAttribute("class", "dropdown-item project-link");
+    project_link.setAttribute("href", "#");
 
 }
 
@@ -48,4 +62,25 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function refresh_project_list() {
+
+    const csrftoken = getCookie('csrftoken');
+
+    let project_list_container = document.querySelector("#projects-list");
+
+    let current_projects = document.querySelectorAll(".project-link");
+    for(var project_link of current_projects) {
+        project_link.remove();
+    }
+
+    fetch('get_projects')
+    .then(response => response.json())
+    .then(projects => {
+
+        console.log(projects);
+
+    })
+
 }
