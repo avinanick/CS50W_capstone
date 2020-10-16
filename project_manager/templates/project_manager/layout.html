@@ -10,7 +10,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-        <script src="{% static 'navbar.js' %}"></script>
+        <script src="{% static 'project_manager/navbar.js' %}"></script>
         {% block script %}
         {% endblock %}
     </head>
@@ -28,18 +28,20 @@
                         <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Projects
+                            Projects
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">+ Create Project</a>
-                        <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" id="create-project-button">+ Create Project</a>
+                            <div class="dropdown-divider"></div>
+                            <div id="projects-list">
+                            </div>
                         </div>
                     </li>
                 {% else %}
@@ -67,6 +69,7 @@
                     <textarea class="form-control" id="project-description-input"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
+                <button class="btn btn-secondary" id="project-cancel">Cancel</button>
             </form>
         </div>
         <div>
