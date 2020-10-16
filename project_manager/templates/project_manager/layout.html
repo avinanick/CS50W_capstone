@@ -51,10 +51,15 @@
                 {% endif %}
               </ul>
             </div>
-          </nav>
-          <div>
-              {% block body %}
-              {% endblock %}
-          </div>
+        </nav>
+        <div id="create-project-overlay">
+            <form action="#" id="create-project-form">
+                {% csrf_token %}
+            </form>
+        </div>
+        <div>
+            {% block body %}
+            {% endblock %}
+        </div>
     </body>
 </html>
