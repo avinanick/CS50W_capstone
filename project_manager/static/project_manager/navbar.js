@@ -34,6 +34,8 @@ function create_project(event) {
     })
     .then(response => {
         console.log(response);
+        document.querySelector("#create-project-overlay").style.display = "none";
+        // Might change this to a redirect
         refresh_project_list();
     })
 
@@ -45,6 +47,9 @@ function create_project_link_element(project_name, project_id) {
 
     project_link.setAttribute("class", "dropdown-item project-link");
     project_link.setAttribute("href", "#");
+    project_link.innerHTML = project_name;
+
+    return project_link;
 
 }
 
@@ -80,6 +85,9 @@ function refresh_project_list() {
     .then(projects => {
 
         console.log(projects);
+        for(let i=0; i < projects.projects.length; i++) {
+            project_list_container.appendChild(create_project_link_element(projects.projects[i].name, projects.projects[i].id));
+        }
 
     })
 
