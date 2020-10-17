@@ -62,8 +62,12 @@ def logout_view(request):
 
 @login_required
 def project(request, project_id):
+    project_accessed = Project.objects.filter(id=project_id)
+    if project_accessed.count() < 1:
+        return # STUB: Need an error page to show
+
     return render(request, "project_manager/project_page.html", {
-        
+        "project_id": project_id
     })
 
 @login_required
