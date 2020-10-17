@@ -61,6 +61,12 @@ def logout_view(request):
     return redirect("login")
 
 @login_required
+def project(request, project_id):
+    return render(request, "project_manager/project_page.html", {
+        
+    })
+
+@login_required
 def projects(request):
     user_memberships = Membership.objects.filter(member=request.user)
     user_projects = []

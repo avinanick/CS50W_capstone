@@ -49,6 +49,8 @@ function create_project_link_element(project_name, project_id) {
     project_link.setAttribute("href", "#");
     project_link.innerHTML = project_name;
 
+    // This will need to be modified to link to the project page
+
     return project_link;
 
 }
