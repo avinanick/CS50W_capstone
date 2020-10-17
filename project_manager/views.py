@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import JsonResponse
+import json
 
 from .models import User, Project, Deadline, Task, Authority, Membership
 
@@ -16,6 +18,11 @@ def create_project(request):
         return JsonResponse({"error": "POST request required."}, status=400)
     
     data = json.loads(request.body)
+
+    check_project = Project.objects.filter(creator=request.user, name=data["project_name"])
+    if check_project.count() > 0:
+        return JsonResponse({"error": "Matching project already exists."}, status=400)
+
     new_project = Project(
         creator = request.user, 
         name = data["project_name"], 
@@ -60,7 +67,7 @@ def projects(request):
     for membership in user_memberships:
         user_projects.append(membership.project)
     
-    return JsonResponse({"projects":[project.name for project in user_projects]})
+    return JsonResponse({"projects":[{"name": project.name, "id": project.id} for project in user_projects]})
 
 def register(request):
     if request.method == "POST":
