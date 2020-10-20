@@ -37,6 +37,12 @@ def create_project(request):
     new_membership.save()
     return JsonResponse({"message": "Project created."}, status=201)
 
+@login_required
+def deadlines(request):
+    # Check to make sure the logged in user has access to this project, if so, return the list
+    # of project deadlines
+    pass
+
 def login_view(request):
     if request.method == "POST":
 
