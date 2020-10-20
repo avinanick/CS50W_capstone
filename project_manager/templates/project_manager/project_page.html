@@ -1,13 +1,6 @@
 {% extends 'project_manager/layout.html' %}
 
 {% block body %}
-<div id="deadlines-container">
-</div>
-<div id="tasks-container">
-
-</div>
-<div id="project-taskbar">
-    <button id="create-deadline-button">Create Deadline</button>
-    <button id="create-task-button">Create Task</button>
+<div id="project-root" data-projectid = {{ project_id }}>
 </div>
 {% endblock %}
