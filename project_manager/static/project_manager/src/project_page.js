@@ -19,6 +19,8 @@ class Project extends React.Component {
         super(props);
         // I need to check the div for which project I'm loading so I can fetch the
         // correct deadlines
+        let project_root = document.getElementById("project-root")
+        let project_id = project_root.dataset.projectid
         this.state = {
             section: "deadlines"
         };

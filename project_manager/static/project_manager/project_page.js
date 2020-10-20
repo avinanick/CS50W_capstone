@@ -56,6 +56,8 @@ var Project = function (_React$Component3) {
         // correct deadlines
         var _this3 = _possibleConstructorReturn(this, (Project.__proto__ || Object.getPrototypeOf(Project)).call(this, props));
 
+        var project_root = document.getElementById("project-root");
+        var project_id = project_root.dataset.projectid;
         _this3.state = {
             section: "deadlines"
         };
