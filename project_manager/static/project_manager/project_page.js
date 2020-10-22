@@ -56,11 +56,14 @@ var Project = function (_React$Component3) {
         // correct deadlines
         var _this3 = _possibleConstructorReturn(this, (Project.__proto__ || Object.getPrototypeOf(Project)).call(this, props));
 
-        var project_root = document.getElementById("project-root");
-        var project_id = project_root.dataset.projectid;
         _this3.state = {
-            section: "deadlines"
+            project_id: 0,
+            section: "deadlines",
+            project_deadlines: []
         };
+        var project_root = document.getElementById("project-root");
+        _this3.state.project_id = project_root.dataset.projectid;
+        _this3.updateDeadlines();
         return _this3;
     }
 
@@ -75,6 +78,36 @@ var Project = function (_React$Component3) {
         value: function selectTask(id) {
             // change the state to the task with id and change the visible 
             // div to the id with information
+        }
+    }, {
+        key: "updateDeadlines",
+        value: function updateDeadlines() {
+            var _this4 = this;
+
+            fetch('get_deadlines', {
+                method: "GET",
+                body: JSON.stringify({
+                    project_id: this.state.project_id
+                })
+            }).then(function (response) {
+                return response.json();
+            }).then(function (deadlines) {
+
+                console.log(deadlines);
+                _this4.state.project_deadlines = [];
+                for (var i = 0; i < deadlines.deadlines.length; i++) {
+                    _this4.state.project_deadlines.concat([{
+                        date: deadlines.deadlines[i].date,
+                        id: deadlines.deadlines[i].id
+                    }]);
+                }
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            // This should check what state the page is in, and render
+            // as appropriate
         }
     }]);
 

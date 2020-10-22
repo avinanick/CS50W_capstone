@@ -19,11 +19,14 @@ class Project extends React.Component {
         super(props);
         // I need to check the div for which project I'm loading so I can fetch the
         // correct deadlines
-        let project_root = document.getElementById("project-root")
-        let project_id = project_root.dataset.projectid
         this.state = {
-            section: "deadlines"
+            project_id: 0,
+            section: "deadlines",
+            project_deadlines: []
         };
+        let project_root = document.getElementById("project-root");
+        this.state.project_id = project_root.dataset.projectid;
+        this.updateDeadlines();
     }
 
     selectDeadline(id) {
@@ -34,6 +37,35 @@ class Project extends React.Component {
     selectTask(id) {
         // change the state to the task with id and change the visible 
         // div to the id with information
+    }
+
+    updateDeadlines() {
+        fetch('get_deadlines', {
+            method: "GET",
+            body: JSON.stringify({
+                project_id: this.state.project_id
+            })
+        })
+        .then(response => response.json())
+        .then(deadlines => {
+
+            console.log(deadlines);
+            this.state.project_deadlines = [];
+            for(let i=0; i < deadlines.deadlines.length; i++) {
+                this.state.project_deadlines.concat([
+                    {
+                        date: deadlines.deadlines[i].date,
+                        id: deadlines.deadlines[i].id
+                    }
+                ]);
+            }
+
+        })
+    }
+
+    render() {
+        // This should check what state the page is in, and render
+        // as appropriate
     }
 }
 
