@@ -38,11 +38,10 @@ def create_project(request):
     return JsonResponse({"message": "Project created."}, status=201)
 
 @login_required
-def deadlines(request):
+def deadlines(request, project_id):
     # Check to make sure the logged in user has access to this project, if so, return the list
     # of project deadlines
-    data = json.loads(request.body)
-    requested_project = Project.objects.get(id=data["project_id"])
+    requested_project = Project.objects.get(id=project_id)
     member_check = Membership.objects.filter(member=request.user, project=requested_project)
     if not member_check:
         return JsonResponse({"error": "User not authorized for project,"}, status=400)
