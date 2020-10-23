@@ -11,7 +11,9 @@ class DeadlineLink extends React.Component {
 class DeadlineList extends React.Component {
     renderDeadline(deadline_json) {
         return (
-            <div className="deadline-container"></div>
+            <div className="deadline-container" onClick={this.props.onClick(deadline_json.id)}>
+                Deadline: {deadline_json.date}
+            </div>
         );
     }
 
@@ -44,7 +46,7 @@ class Project extends React.Component {
                 id: 0
             },
             project_deadlines: [],
-            deadline_tasks = []
+            deadline_tasks: []
         };
         let project_root = document.getElementById("project-root");
         this.state.project_id = project_root.dataset.projectid;
@@ -94,6 +96,7 @@ class Project extends React.Component {
             return (
                 <DeadLineList
                     deadlines={this.state.project_deadlines}
+                    onClick={i => this.selectDeadline(i)}
                 />
             );
         }
