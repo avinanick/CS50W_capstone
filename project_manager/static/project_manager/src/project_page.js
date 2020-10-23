@@ -66,7 +66,7 @@ class Project extends React.Component {
     }
 
     updateDeadlines() {
-        fetch('get_deadlines', {
+        fetch('/get_deadlines', {
             method: "GET",
             body: JSON.stringify({
                 project_id: this.state.project_id

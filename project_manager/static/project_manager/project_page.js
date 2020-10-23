@@ -141,7 +141,7 @@ var Project = function (_React$Component3) {
         value: function updateDeadlines() {
             var _this4 = this;
 
-            fetch('get_deadlines', {
+            fetch('/get_deadlines', {
                 method: "GET",
                 body: JSON.stringify({
                     project_id: this.state.project_id
