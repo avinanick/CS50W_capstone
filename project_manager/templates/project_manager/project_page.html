@@ -1,5 +1,9 @@
 {% extends 'project_manager/layout.html' %}
 
+{% block script %}
+<script src="{% static 'project_manager/project_page.js' %}"></script>
+{% endblock %}
+
 {% block body %}
 <div id="project-root" data-projectid = {{ project_id }}>
 </div>
