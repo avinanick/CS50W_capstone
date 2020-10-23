@@ -82,7 +82,7 @@ function refresh_project_list() {
         project_link.remove();
     }
 
-    fetch('get_projects')
+    fetch('/get_projects')
     .then(response => response.json())
     .then(projects => {
 
