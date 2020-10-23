@@ -43,11 +43,15 @@ def deadlines(request):
     # of project deadlines
     data = json.loads(request.body)
     requested_project = Project.objects.get(id=data["project_id"])
-    member_check = Membership.objects.filter(member=request.user, project=requested_project))
+    member_check = Membership.objects.filter(member=request.user, project=requested_project)
     if not member_check:
         return JsonResponse({"error": "User not authorized for project,"}, status=400)
     deadlines = Deadline.objects.order_by("-due_date").filter(project=requested_project)
-    return JsonResponse({"deadlines":[{"id":deadline.id, "date": deadline.due_date.strftime("%m/%d/%Y")} for deadline in deadlines]})
+
+    return JsonResponse({"deadlines":[{
+        "id":deadline.id, 
+        "date": deadline.due_date.strftime("%m/%d/%Y")} 
+        for deadline in deadlines]})
 
 def login_view(request):
     if request.method == "POST":
