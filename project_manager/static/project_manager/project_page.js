@@ -58,7 +58,10 @@ var Project = function (_React$Component3) {
 
         _this3.state = {
             project_id: 0,
-            section: "deadlines",
+            section: {
+                state: "deadlines",
+                id: 0
+            },
             project_deadlines: []
         };
         var project_root = document.getElementById("project-root");
@@ -115,3 +118,7 @@ var Project = function (_React$Component3) {
 }(React.Component);
 
 function GetTasks(deadline_id) {}
+
+// =========================================================================
+
+ReactDOM.render(React.createElement(Project, null), document.getElementById("project-root"));

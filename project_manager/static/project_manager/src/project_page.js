@@ -9,8 +9,26 @@ class DeadlineLink extends React.Component {
 }
 
 class DeadlineList extends React.Component {
+    renderDeadline(deadline_json) {
+        return (
+            <div className="deadline-container"></div>
+        );
+    }
+
     render() {
-        
+
+        const items = []
+
+        for(const [index, value] of this.props.deadlines) {
+            items.push(this.renderDeadline(value));
+        }
+
+        return (
+            <div>
+                {items}
+            </div>
+        );
+            
     };
 }
 
@@ -21,8 +39,12 @@ class Project extends React.Component {
         // correct deadlines
         this.state = {
             project_id: 0,
-            section: "deadlines",
-            project_deadlines: []
+            section: {
+                state: "deadlines",
+                id: 0
+            },
+            project_deadlines: [],
+            deadline_tasks = []
         };
         let project_root = document.getElementById("project-root");
         this.state.project_id = project_root.dataset.projectid;
@@ -32,6 +54,8 @@ class Project extends React.Component {
     selectDeadline(id) {
         // change the state to the deadline with id and change the visible
         // div to the tasks within that deadline
+        this.state.section.state = "tasks";
+        this.state.section.id = id;
     }
 
     selectTask(id) {
@@ -66,9 +90,20 @@ class Project extends React.Component {
     render() {
         // This should check what state the page is in, and render
         // as appropriate
+        if(this.state.section.state === "deadlines") {
+            return (
+                <DeadLineList
+                    deadlines={this.state.project_deadlines}
+                />
+            );
+        }
     }
 }
 
 function GetTasks(deadline_id) {
 
 }
+
+// =========================================================================
+
+ReactDOM.render(<Project />, document.getElementById("project-root"));
