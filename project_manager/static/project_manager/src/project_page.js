@@ -1,3 +1,5 @@
+'use strict';
+
 class DeadlineLink extends React.Component {
     render() {
         return  (
@@ -94,7 +96,7 @@ class Project extends React.Component {
         // as appropriate
         if(this.state.section.state === "deadlines") {
             return (
-                <DeadLineList
+                <DeadlineList
                     deadlines={this.state.project_deadlines}
                     onClick={i => this.selectDeadline(i)}
                 />
@@ -109,4 +111,8 @@ function GetTasks(deadline_id) {
 
 // =========================================================================
 
-ReactDOM.render(<Project />, document.getElementById("project-root"));
+document.addEventListener('DOMContentLoaded', function() {
+
+    ReactDOM.render(<Project />, document.getElementById("project-root"));
+
+});
