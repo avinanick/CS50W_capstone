@@ -13,6 +13,14 @@ def index(request):
     return render(request, "project_manager/index.html")
 
 @login_required
+def create_deadline(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    data = json.loads(request.body)
+    linked_project = Project.objects.get(id=data["project_id"])
+
+@login_required
 def create_project(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
