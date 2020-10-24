@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import JsonResponse
 import json
+import datetime
 
 from .models import User, Project, Deadline, Task, Authority, Membership
 
@@ -19,6 +20,13 @@ def create_deadline(request):
 
     data = json.loads(request.body)
     linked_project = Project.objects.get(id=data["project_id"])
+    submitted_date = datetime.date(data["year"], data["month"], data["day"])
+    new_deadline = Deadline(
+        project=linked_project, 
+        due_date=submitted_date)
+
+    new_deadline.save()
+    return JsonResponse({"message": "Deadline created."}, status=201)
 
 @login_required
 def create_project(request):
