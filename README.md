@@ -26,4 +26,6 @@ Tasks are created by any member working on the project. They can optionally be a
 
 ## Contents
 
+The project_manager/static/project_manager/src/ folder contains the source react/jsx code that was translated into regular javascript using babel, output files for this process share their name with the original file and are contained in the project_manager/static/project_manager/ folder.
+
 ## Defense
