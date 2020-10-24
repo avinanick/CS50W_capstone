@@ -1,5 +1,76 @@
 'use strict';
 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+class CreateDeadlineForm extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            linked_project: this.props.project_id,
+            date: new Date(Date.now())
+        }
+
+        // This should get the currently open project to auto assign
+        // the linked project field
+        this.submit_response = this.submit_response.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(event) {
+        this.setState({date: event.target.value})
+    }
+
+    submit_response(event) {
+        event.preventDefault();
+
+        // send the create deadline request to the backend then call the prop
+        // on submit function (which will likely just be update deadlines)
+        const csrftoken = getCookie('csrftoken');
+
+        fetch('/create_deadline/', {
+        headers: {'X-CSRFToken': csrftoken},
+        method: 'POST',
+        body: JSON.stringify({
+            //content: post_content
+            project_id: this.state.project_id,
+            year: this.state.date.getFullYear(),
+            month: this.state.date.getMonth(),
+            day: this.state.date.getDay()
+            })
+        })
+        .then(response => {
+            console.log(response);
+            this.props.onSubmit();
+        })
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.submit_response} >
+                <h3>Create Deadline</h3>
+                <input type="datetime-local" className="date-input" name="date" onChange={this.handleChange} ></input>
+                <input type="submit">Submit</input>
+                <button>Cancel</button>
+            </form>
+        );
+    }
+}
+
 class DeadlineLink extends React.Component {
     render() {
         return  (
@@ -50,6 +121,8 @@ class Project extends React.Component {
             project_deadlines: [],
             deadline_tasks: []
         };
+        this.selectDeadline = this.selectDeadline.bind(this);
+        this.selectTask = this.selectTask.bind(this);
         let project_root = document.getElementById("project-root");
         this.state.project_id = project_root.dataset.projectid;
         this.updateDeadlines();
@@ -89,6 +162,8 @@ class Project extends React.Component {
     render() {
         // This should check what state the page is in, and render
         // as appropriate
+        // I need to make the bottom bar section next, and likely move
+        // the if statement before the return
         if(this.state.section.state === "deadlines") {
             return (
                 <DeadlineList

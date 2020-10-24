@@ -73,8 +73,6 @@ function getCookie(name) {
 
 function refresh_project_list() {
 
-    const csrftoken = getCookie('csrftoken');
-
     let project_list_container = document.querySelector("#projects-list");
 
     let current_projects = document.querySelectorAll(".project-link");
