@@ -61,12 +61,12 @@ var CreateDeadlineForm = function (_React$Component) {
             // on submit function (which will likely just be update deadlines)
             var csrftoken = getCookie('csrftoken');
 
-            fetch('/create_deadline/', {
+            fetch('/create_deadline', {
                 headers: { 'X-CSRFToken': csrftoken },
                 method: 'POST',
                 body: JSON.stringify({
                     //content: post_content
-                    project_id: this.state.project_id,
+                    project_id: parseInt(this.state.linked_project),
                     year: this.state.date.getFullYear(),
                     month: this.state.date.getMonth(),
                     day: this.state.date.getDay()
@@ -81,7 +81,7 @@ var CreateDeadlineForm = function (_React$Component) {
         value: function render() {
             return React.createElement(
                 'div',
-                { className: 'overlay-form' },
+                { className: 'overlay-form', id: 'deadline-form' },
                 React.createElement(
                     'form',
                     { onSubmit: this.submit_response },
@@ -92,13 +92,13 @@ var CreateDeadlineForm = function (_React$Component) {
                     ),
                     React.createElement('input', { type: 'datetime-local', className: 'date-input', name: 'date', onChange: this.handleChange }),
                     React.createElement(
-                        'input',
-                        { type: 'submit' },
+                        'button',
+                        { type: 'submit', className: 'btn btn-primary' },
                         'Submit'
                     ),
                     React.createElement(
                         'button',
-                        null,
+                        { type: 'button', className: 'btn btn-primary', onClick: this.props.cancel_response },
                         'Cancel'
                     )
                 )
@@ -219,6 +219,7 @@ var Project = function (_React$Component4) {
         };
         _this5.selectDeadline = _this5.selectDeadline.bind(_this5);
         _this5.selectTask = _this5.selectTask.bind(_this5);
+        _this5.updateDeadlines = _this5.updateDeadlines.bind(_this5);
         var project_root = document.getElementById("project-root");
         _this5.state.project_id = project_root.dataset.projectid;
         _this5.updateDeadlines();
@@ -226,6 +227,16 @@ var Project = function (_React$Component4) {
     }
 
     _createClass(Project, [{
+        key: 'hideDeadlineForm',
+        value: function hideDeadlineForm() {
+            document.querySelector("#deadline-form").style.display = "none";
+        }
+    }, {
+        key: 'openDeadlineForm',
+        value: function openDeadlineForm() {
+            document.querySelector("#deadline-form").style.display = "block";
+        }
+    }, {
         key: 'selectDeadline',
         value: function selectDeadline(id) {
             // change the state to the deadline with id and change the visible
@@ -277,7 +288,14 @@ var Project = function (_React$Component4) {
                             return _this7.selectDeadline(i);
                         }
                     }),
-                    React.createElement(ProjectTaskbar, null)
+                    React.createElement(CreateDeadlineForm, {
+                        project_id: this.state.project_id,
+                        onSubmit: this.updateDeadlines,
+                        cancel_response: this.hideDeadlineForm
+                    }),
+                    React.createElement(ProjectTaskbar, {
+                        deadline_click: this.openDeadlineForm
+                    })
                 );
             }
         }
@@ -303,7 +321,7 @@ var ProjectTaskbar = function (_React$Component5) {
                 { className: 'bottom-taskbar' },
                 React.createElement(
                     'button',
-                    { className: 'btn btn-light' },
+                    { className: 'btn btn-light', onClick: this.props.deadline_click },
                     'Create Deadline'
                 ),
                 React.createElement(

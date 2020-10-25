@@ -42,12 +42,12 @@ class CreateDeadlineForm extends React.Component {
         // on submit function (which will likely just be update deadlines)
         const csrftoken = getCookie('csrftoken');
 
-        fetch('/create_deadline/', {
+        fetch('/create_deadline', {
         headers: {'X-CSRFToken': csrftoken},
         method: 'POST',
         body: JSON.stringify({
             //content: post_content
-            project_id: this.state.project_id,
+            project_id: parseInt(this.state.linked_project),
             year: this.state.date.getFullYear(),
             month: this.state.date.getMonth(),
             day: this.state.date.getDay()
@@ -61,12 +61,12 @@ class CreateDeadlineForm extends React.Component {
 
     render() {
         return (
-            <div className="overlay-form">
+            <div className="overlay-form" id="deadline-form">
                 <form onSubmit={this.submit_response} >
                     <h3>Create Deadline</h3>
-                    <input type="datetime-local" className="date-input" name="date" onChange={this.handleChange} ></input>
-                    <input type="submit">Submit</input>
-                    <button>Cancel</button>
+                    <input type="datetime-local" className="date-input" name="date" onChange={this.handleChange} />
+                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="button" className="btn btn-primary" onClick={this.props.cancel_response}>Cancel</button>
                 </form>
             </div>
         );
@@ -125,9 +125,18 @@ class Project extends React.Component {
         };
         this.selectDeadline = this.selectDeadline.bind(this);
         this.selectTask = this.selectTask.bind(this);
+        this.updateDeadlines = this.updateDeadlines.bind(this);
         let project_root = document.getElementById("project-root");
         this.state.project_id = project_root.dataset.projectid;
         this.updateDeadlines();
+    }
+
+    hideDeadlineForm() {
+        document.querySelector("#deadline-form").style.display = "none";
+    }
+
+    openDeadlineForm() {
+        document.querySelector("#deadline-form").style.display = "block";
     }
 
     selectDeadline(id) {
@@ -173,7 +182,14 @@ class Project extends React.Component {
                     deadlines={this.state.project_deadlines}
                     onClick={i => this.selectDeadline(i)}
                     />
-                    <ProjectTaskbar />
+                    <CreateDeadlineForm 
+                    project_id={this.state.project_id}
+                    onSubmit={this.updateDeadlines}
+                    cancel_response={this.hideDeadlineForm}
+                    />
+                    <ProjectTaskbar 
+                    deadline_click={this.openDeadlineForm}
+                    />
                 </div>
             );
         }
@@ -184,7 +200,7 @@ class ProjectTaskbar extends React.Component {
     render() {
         return(
             <div className='bottom-taskbar'>
-                <button className="btn btn-light">Create Deadline</button>
+                <button className="btn btn-light" onClick={this.props.deadline_click}>Create Deadline</button>
                 <button className="btn btn-light">Create Task</button>
             </div>
         );
