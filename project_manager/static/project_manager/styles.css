@@ -15,6 +15,7 @@
 .deadline-container {
     margin: 5px;
     background-color: lightgray;
+    width: 100%;
 }
 
 .overlay-form {
