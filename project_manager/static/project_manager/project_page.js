@@ -255,6 +255,7 @@ var Project = function (_React$Component4) {
         value: function updateDeadlines() {
             var _this6 = this;
 
+            this.hideDeadlineForm();
             fetch('/get_deadlines/' + this.state.project_id).then(function (response) {
                 return response.json();
             }).then(function (deadlines) {

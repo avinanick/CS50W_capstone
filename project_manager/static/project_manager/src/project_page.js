@@ -152,6 +152,7 @@ class Project extends React.Component {
     }
 
     updateDeadlines() {
+        this.hideDeadlineForm();
         fetch('/get_deadlines/' + this.state.project_id)
         .then(response => response.json())
         .then(deadlines => {
