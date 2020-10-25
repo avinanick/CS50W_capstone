@@ -1,3 +1,17 @@
+.bottom-taskbar {
+    background-color: gray;
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+}
+
+.bottom-taskbar button {
+    margin-left: 25%;
+    margin-top: 10px;
+}
+
 .deadline-container {
     margin: 5px;
     background-color: lightgray;
