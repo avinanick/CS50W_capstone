@@ -61,12 +61,14 @@ class CreateDeadlineForm extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.submit_response} >
-                <h3>Create Deadline</h3>
-                <input type="datetime-local" className="date-input" name="date" onChange={this.handleChange} ></input>
-                <input type="submit">Submit</input>
-                <button>Cancel</button>
-            </form>
+            <div className="overlay-form">
+                <form onSubmit={this.submit_response} >
+                    <h3>Create Deadline</h3>
+                    <input type="datetime-local" className="date-input" name="date" onChange={this.handleChange} ></input>
+                    <input type="submit">Submit</input>
+                    <button>Cancel</button>
+                </form>
+            </div>
         );
     }
 }
@@ -166,12 +168,26 @@ class Project extends React.Component {
         // the if statement before the return
         if(this.state.section.state === "deadlines") {
             return (
-                <DeadlineList
+                <div>
+                    <DeadlineList
                     deadlines={this.state.project_deadlines}
                     onClick={i => this.selectDeadline(i)}
-                />
+                    />
+                    <ProjectTaskbar />
+                </div>
             );
         }
+    }
+}
+
+class ProjectTaskbar extends React.Component {
+    render() {
+        return(
+            <div className='bottom-taskbar'>
+                <button className="btn btn-light">Create Deadline</button>
+                <button className="btn btn-light">Create Task</button>
+            </div>
+        );
     }
 }
 

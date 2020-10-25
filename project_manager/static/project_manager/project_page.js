@@ -80,23 +80,27 @@ var CreateDeadlineForm = function (_React$Component) {
         key: 'render',
         value: function render() {
             return React.createElement(
-                'form',
-                { onSubmit: this.submit_response },
+                'div',
+                { className: 'overlay-form' },
                 React.createElement(
-                    'h3',
-                    null,
-                    'Create Deadline'
-                ),
-                React.createElement('input', { type: 'datetime-local', className: 'date-input', name: 'date', onChange: this.handleChange }),
-                React.createElement(
-                    'input',
-                    { type: 'submit' },
-                    'Submit'
-                ),
-                React.createElement(
-                    'button',
-                    null,
-                    'Cancel'
+                    'form',
+                    { onSubmit: this.submit_response },
+                    React.createElement(
+                        'h3',
+                        null,
+                        'Create Deadline'
+                    ),
+                    React.createElement('input', { type: 'datetime-local', className: 'date-input', name: 'date', onChange: this.handleChange }),
+                    React.createElement(
+                        'input',
+                        { type: 'submit' },
+                        'Submit'
+                    ),
+                    React.createElement(
+                        'button',
+                        null,
+                        'Cancel'
+                    )
                 )
             );
         }
@@ -264,17 +268,54 @@ var Project = function (_React$Component4) {
             // I need to make the bottom bar section next, and likely move
             // the if statement before the return
             if (this.state.section.state === "deadlines") {
-                return React.createElement(DeadlineList, {
-                    deadlines: this.state.project_deadlines,
-                    onClick: function onClick(i) {
-                        return _this7.selectDeadline(i);
-                    }
-                });
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(DeadlineList, {
+                        deadlines: this.state.project_deadlines,
+                        onClick: function onClick(i) {
+                            return _this7.selectDeadline(i);
+                        }
+                    }),
+                    React.createElement(ProjectTaskbar, null)
+                );
             }
         }
     }]);
 
     return Project;
+}(React.Component);
+
+var ProjectTaskbar = function (_React$Component5) {
+    _inherits(ProjectTaskbar, _React$Component5);
+
+    function ProjectTaskbar() {
+        _classCallCheck(this, ProjectTaskbar);
+
+        return _possibleConstructorReturn(this, (ProjectTaskbar.__proto__ || Object.getPrototypeOf(ProjectTaskbar)).apply(this, arguments));
+    }
+
+    _createClass(ProjectTaskbar, [{
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'div',
+                { className: 'bottom-taskbar' },
+                React.createElement(
+                    'button',
+                    { className: 'btn btn-light' },
+                    'Create Deadline'
+                ),
+                React.createElement(
+                    'button',
+                    { className: 'btn btn-light' },
+                    'Create Task'
+                )
+            );
+        }
+    }]);
+
+    return ProjectTaskbar;
 }(React.Component);
 
 function GetTasks(deadline_id) {}
