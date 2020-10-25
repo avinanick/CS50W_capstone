@@ -73,20 +73,10 @@ class CreateDeadlineForm extends React.Component {
     }
 }
 
-class DeadlineLink extends React.Component {
-    render() {
-        return  (
-            <div>
-                <a href="#"></a>
-            </div>
-        );
-    }
-}
-
 class DeadlineList extends React.Component {
     renderDeadline(deadline_json) {
         return (
-            <div className="deadline-container" onClick={this.props.onClick(deadline_json.id)}>
+            <div className="deadline-container" onClick={() => this.props.onClick(deadline_json.id)} key={deadline_json.id}>
                 Deadline: {deadline_json.date}
             </div>
         );
@@ -94,17 +84,22 @@ class DeadlineList extends React.Component {
 
     render() {
 
-        const items = []
+        if(this.props.deadlines.length > 0) {
+            const items = []
 
-        for(const [index, value] of this.props.deadlines) {
-            items.push(this.renderDeadline(value));
+            for(let i=0; i < this.props.deadlines.length; i++) {
+                items.push(this.renderDeadline(this.props.deadlines[i]));
+            }
+
+            return (
+                <div>
+                    {items}
+                </div>
+            );
         }
-
-        return (
-            <div>
-                {items}
-            </div>
-        );
+        else {
+            return <div></div>;
+        }
             
     };
 }
@@ -132,7 +127,10 @@ class Project extends React.Component {
     }
 
     hideDeadlineForm() {
-        document.querySelector("#deadline-form").style.display = "none";
+        let hide_form = document.querySelector("#deadline-form");
+        if(hide_form) {
+            hide_form.style.display = "none";
+        }
     }
 
     openDeadlineForm() {
@@ -142,8 +140,10 @@ class Project extends React.Component {
     selectDeadline(id) {
         // change the state to the deadline with id and change the visible
         // div to the tasks within that deadline
-        this.state.section.state = "tasks";
-        this.state.section.id = id;
+        this.setState({section: {
+            id: id,
+            state: "tasks"
+        }});
     }
 
     selectTask(id) {
@@ -157,16 +157,18 @@ class Project extends React.Component {
         .then(response => response.json())
         .then(deadlines => {
 
-            console.log(deadlines);
-            this.state.project_deadlines = [];
+            let deadlines_list = [];
+
             for(let i=0; i < deadlines.deadlines.length; i++) {
-                this.state.project_deadlines.concat([
-                    {
-                        date: deadlines.deadlines[i].date,
-                        id: deadlines.deadlines[i].id
-                    }
-                ]);
+                
+                deadlines_list = deadlines_list.concat([{
+                    date: deadlines.deadlines[i].date,
+                    id: deadlines.deadlines[i].id
+                }]);
+
             }
+
+            this.setState({project_deadlines: deadlines_list});
 
         })
     }
@@ -183,6 +185,20 @@ class Project extends React.Component {
                     deadlines={this.state.project_deadlines}
                     onClick={i => this.selectDeadline(i)}
                     />
+                    <CreateDeadlineForm 
+                    project_id={this.state.project_id}
+                    onSubmit={this.updateDeadlines}
+                    cancel_response={this.hideDeadlineForm}
+                    />
+                    <ProjectTaskbar 
+                    deadline_click={this.openDeadlineForm}
+                    />
+                </div>
+            );
+        }
+        else {
+            return (
+                <div>
                     <CreateDeadlineForm 
                     project_id={this.state.project_id}
                     onSubmit={this.updateDeadlines}

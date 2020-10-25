@@ -1,7 +1,5 @@
 'use strict';
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -109,31 +107,8 @@ var CreateDeadlineForm = function (_React$Component) {
     return CreateDeadlineForm;
 }(React.Component);
 
-var DeadlineLink = function (_React$Component2) {
-    _inherits(DeadlineLink, _React$Component2);
-
-    function DeadlineLink() {
-        _classCallCheck(this, DeadlineLink);
-
-        return _possibleConstructorReturn(this, (DeadlineLink.__proto__ || Object.getPrototypeOf(DeadlineLink)).apply(this, arguments));
-    }
-
-    _createClass(DeadlineLink, [{
-        key: 'render',
-        value: function render() {
-            return React.createElement(
-                'div',
-                null,
-                React.createElement('a', { href: '#' })
-            );
-        }
-    }]);
-
-    return DeadlineLink;
-}(React.Component);
-
-var DeadlineList = function (_React$Component3) {
-    _inherits(DeadlineList, _React$Component3);
+var DeadlineList = function (_React$Component2) {
+    _inherits(DeadlineList, _React$Component2);
 
     function DeadlineList() {
         _classCallCheck(this, DeadlineList);
@@ -144,9 +119,13 @@ var DeadlineList = function (_React$Component3) {
     _createClass(DeadlineList, [{
         key: 'renderDeadline',
         value: function renderDeadline(deadline_json) {
+            var _this4 = this;
+
             return React.createElement(
                 'div',
-                { className: 'deadline-container', onClick: this.props.onClick(deadline_json.id) },
+                { className: 'deadline-container', onClick: function onClick() {
+                        return _this4.props.onClick(deadline_json.id);
+                    }, key: deadline_json.id },
                 'Deadline: ',
                 deadline_json.date
             );
@@ -155,51 +134,29 @@ var DeadlineList = function (_React$Component3) {
         key: 'render',
         value: function render() {
 
-            var items = [];
+            if (this.props.deadlines.length > 0) {
+                var items = [];
 
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = this.props.deadlines[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var _ref = _step.value;
-
-                    var _ref2 = _slicedToArray(_ref, 2);
-
-                    var index = _ref2[0];
-                    var value = _ref2[1];
-
-                    items.push(this.renderDeadline(value));
+                for (var i = 0; i < this.props.deadlines.length; i++) {
+                    items.push(this.renderDeadline(this.props.deadlines[i]));
                 }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
+
+                return React.createElement(
+                    'div',
+                    null,
+                    items
+                );
+            } else {
+                return React.createElement('div', null);
             }
-
-            return React.createElement(
-                'div',
-                null,
-                items
-            );
         }
     }]);
 
     return DeadlineList;
 }(React.Component);
 
-var Project = function (_React$Component4) {
-    _inherits(Project, _React$Component4);
+var Project = function (_React$Component3) {
+    _inherits(Project, _React$Component3);
 
     function Project(props) {
         _classCallCheck(this, Project);
@@ -229,7 +186,10 @@ var Project = function (_React$Component4) {
     _createClass(Project, [{
         key: 'hideDeadlineForm',
         value: function hideDeadlineForm() {
-            document.querySelector("#deadline-form").style.display = "none";
+            var hide_form = document.querySelector("#deadline-form");
+            if (hide_form) {
+                hide_form.style.display = "none";
+            }
         }
     }, {
         key: 'openDeadlineForm',
@@ -241,8 +201,10 @@ var Project = function (_React$Component4) {
         value: function selectDeadline(id) {
             // change the state to the deadline with id and change the visible
             // div to the tasks within that deadline
-            this.state.section.state = "tasks";
-            this.state.section.id = id;
+            this.setState({ section: {
+                    id: id,
+                    state: "tasks"
+                } });
         }
     }, {
         key: 'selectTask',
@@ -260,14 +222,17 @@ var Project = function (_React$Component4) {
                 return response.json();
             }).then(function (deadlines) {
 
-                console.log(deadlines);
-                _this6.state.project_deadlines = [];
+                var deadlines_list = [];
+
                 for (var i = 0; i < deadlines.deadlines.length; i++) {
-                    _this6.state.project_deadlines.concat([{
+
+                    deadlines_list = deadlines_list.concat([{
                         date: deadlines.deadlines[i].date,
                         id: deadlines.deadlines[i].id
                     }]);
                 }
+
+                _this6.setState({ project_deadlines: deadlines_list });
             });
         }
     }, {
@@ -298,6 +263,19 @@ var Project = function (_React$Component4) {
                         deadline_click: this.openDeadlineForm
                     })
                 );
+            } else {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(CreateDeadlineForm, {
+                        project_id: this.state.project_id,
+                        onSubmit: this.updateDeadlines,
+                        cancel_response: this.hideDeadlineForm
+                    }),
+                    React.createElement(ProjectTaskbar, {
+                        deadline_click: this.openDeadlineForm
+                    })
+                );
             }
         }
     }]);
@@ -305,8 +283,8 @@ var Project = function (_React$Component4) {
     return Project;
 }(React.Component);
 
-var ProjectTaskbar = function (_React$Component5) {
-    _inherits(ProjectTaskbar, _React$Component5);
+var ProjectTaskbar = function (_React$Component4) {
+    _inherits(ProjectTaskbar, _React$Component4);
 
     function ProjectTaskbar() {
         _classCallCheck(this, ProjectTaskbar);
