@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import json
 import datetime
 
-from .models import User, Project, Deadline, Task, Authority, Membership
+from .models import User, Project, Deadline, Task, Authority, Membership, Workflow
 
 # Create your views here.
 @login_required
@@ -59,6 +59,22 @@ def create_task(request):
         return JsonResponse({"error": "POST request required."}, status=400)
     
     data = json.loads(request.body)
+    linked_project = Project.objects.get(id=data["project_id"])
+
+    new_task = Task(
+        creator=request.user,
+        description=data["description"],
+        title=data["title"],
+        project=linked_project,
+        flow_status=Workflow.objects.get(name="To DO")
+    )
+    if Deadline.objects.filter(id=data["deadline_id"]).exists():
+        new_task.deadline = Deadline.objects.get(id=data["deadline_id"])
+
+    new_task.save()
+
+    return JsonResponse({"message": "Task created."}, status=201)
+
 
 @login_required
 def deadlines(request, project_id):
