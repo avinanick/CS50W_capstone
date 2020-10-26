@@ -54,6 +54,13 @@ def create_project(request):
     return JsonResponse({"message": "Project created."}, status=201)
 
 @login_required
+def create_task(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+
+@login_required
 def deadlines(request, project_id):
     # Check to make sure the logged in user has access to this project, if so, return the list
     # of project deadlines
