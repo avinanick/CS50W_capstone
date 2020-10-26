@@ -22,6 +22,7 @@ class Task(models.Model):
     title = models.CharField(max_length=1024)
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
+    flow_status = models.ForeignKey("Workflow", on_delete=models.CASCADE, related_name="tasks")
 
 class Authority(models.Model):
     level = models.CharField(max_length=16)
@@ -30,3 +31,6 @@ class Membership(models.Model):
     member = models.ForeignKey("User", on_delete=models.CASCADE, related_name="memberships")
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="members")
     auth_level = models.ForeignKey("Authority", on_delete=models.PROTECT, related_name="level_members")
+
+class Workflow(models.Model):
+    name = models.CharField(max_length=15)
