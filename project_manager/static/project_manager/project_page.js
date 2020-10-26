@@ -133,6 +133,7 @@ var DeadlineList = function (_React$Component2) {
     }, {
         key: 'render',
         value: function render() {
+            var _this5 = this;
 
             if (this.props.deadlines.length > 0) {
                 var items = [];
@@ -144,7 +145,14 @@ var DeadlineList = function (_React$Component2) {
                 return React.createElement(
                     'div',
                     null,
-                    items
+                    items,
+                    React.createElement(
+                        'div',
+                        { className: 'deadline-container', onClick: function onClick() {
+                                return _this5.props.onClick(-1);
+                            }, key: '-1' },
+                        'Unsortted'
+                    )
                 );
             } else {
                 return React.createElement('div', null);
@@ -163,9 +171,9 @@ var Project = function (_React$Component3) {
 
         // I need to check the div for which project I'm loading so I can fetch the
         // correct deadlines
-        var _this5 = _possibleConstructorReturn(this, (Project.__proto__ || Object.getPrototypeOf(Project)).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, (Project.__proto__ || Object.getPrototypeOf(Project)).call(this, props));
 
-        _this5.state = {
+        _this6.state = {
             project_id: 0,
             section: {
                 state: "deadlines",
@@ -174,13 +182,13 @@ var Project = function (_React$Component3) {
             project_deadlines: [],
             deadline_tasks: []
         };
-        _this5.selectDeadline = _this5.selectDeadline.bind(_this5);
-        _this5.selectTask = _this5.selectTask.bind(_this5);
-        _this5.updateDeadlines = _this5.updateDeadlines.bind(_this5);
+        _this6.selectDeadline = _this6.selectDeadline.bind(_this6);
+        _this6.selectTask = _this6.selectTask.bind(_this6);
+        _this6.updateDeadlines = _this6.updateDeadlines.bind(_this6);
         var project_root = document.getElementById("project-root");
-        _this5.state.project_id = project_root.dataset.projectid;
-        _this5.updateDeadlines();
-        return _this5;
+        _this6.state.project_id = project_root.dataset.projectid;
+        _this6.updateDeadlines();
+        return _this6;
     }
 
     _createClass(Project, [{
@@ -215,7 +223,7 @@ var Project = function (_React$Component3) {
     }, {
         key: 'updateDeadlines',
         value: function updateDeadlines() {
-            var _this6 = this;
+            var _this7 = this;
 
             this.hideDeadlineForm();
             fetch('/get_deadlines/' + this.state.project_id).then(function (response) {
@@ -232,13 +240,13 @@ var Project = function (_React$Component3) {
                     }]);
                 }
 
-                _this6.setState({ project_deadlines: deadlines_list });
+                _this7.setState({ project_deadlines: deadlines_list });
             });
         }
     }, {
         key: 'render',
         value: function render() {
-            var _this7 = this;
+            var _this8 = this;
 
             // This should check what state the page is in, and render
             // as appropriate
@@ -251,7 +259,7 @@ var Project = function (_React$Component3) {
                     React.createElement(DeadlineList, {
                         deadlines: this.state.project_deadlines,
                         onClick: function onClick(i) {
-                            return _this7.selectDeadline(i);
+                            return _this8.selectDeadline(i);
                         }
                     }),
                     React.createElement(CreateDeadlineForm, {

@@ -94,6 +94,9 @@ class DeadlineList extends React.Component {
             return (
                 <div>
                     {items}
+                    <div className="deadline-container" onClick={() => this.props.onClick(-1)} key="-1">
+                        Unsortted
+                    </div>
                 </div>
             );
         }
