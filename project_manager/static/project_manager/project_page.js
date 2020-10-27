@@ -537,25 +537,28 @@ var TasksBoard = function (_React$Component6) {
         }
     }, {
         key: 'drop',
-        value: function drop(event) {
+        value: function drop(event, new_flow) {
             event.preventDefault();
             var data = event.dataTransfer.getData("text");
             event.target.appendChild(document.getElementById(data));
             // This needs to be updated to send a put request to update
             // the task workflow
+            console.log(new_flow);
         }
     }, {
         key: 'renderTask',
         value: function renderTask(task_json) {
             return React.createElement(
                 'div',
-                { id: 'task-{task_json.id}', className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: this.drag },
+                { className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: this.drag },
                 task_json.title
             );
         }
     }, {
         key: 'render',
         value: function render() {
+            var _this14 = this;
+
             // Update return to give custom headline
             var todo_tasks = [];
             var in_progress_tasks = [];
@@ -586,7 +589,9 @@ var TasksBoard = function (_React$Component6) {
                     { id: 'tasks-board' },
                     React.createElement(
                         'div',
-                        { className: 'task-col', id: 'todo-col', onDrop: this.drop, onDragOver: this.allowDrop },
+                        { className: 'task-col', id: 'todo-col', onDrop: function onDrop(event) {
+                                return _this14.drop(event, "To Do");
+                            }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
                             null,
@@ -596,7 +601,9 @@ var TasksBoard = function (_React$Component6) {
                     ),
                     React.createElement(
                         'div',
-                        { className: 'task-col', id: 'progress-col', onDrop: this.drop, onDragOver: this.allowDrop },
+                        { className: 'task-col', id: 'progress-col', onDrop: function onDrop(event) {
+                                return _this14.drop(event, "In Progress");
+                            }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
                             null,
@@ -606,7 +613,9 @@ var TasksBoard = function (_React$Component6) {
                     ),
                     React.createElement(
                         'div',
-                        { className: 'task-col', id: 'done-col', onDrop: this.drop, onDragOver: this.allowDrop },
+                        { className: 'task-col', id: 'done-col', onDrop: function onDrop(event) {
+                                return _this14.drop(event, "Done");
+                            }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
                             null,

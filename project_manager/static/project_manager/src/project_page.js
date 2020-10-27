@@ -394,17 +394,18 @@ class TasksBoard extends React.Component {
         event.dataTransfer.setData("text", event.target.id);
     }
 
-    drop(event) {
+    drop(event, new_flow) {
         event.preventDefault();
         let data = event.dataTransfer.getData("text");
         event.target.appendChild(document.getElementById(data));
         // This needs to be updated to send a put request to update
         // the task workflow
+        console.log(new_flow);
     }
 
     renderTask(task_json) {
         return (
-            <div id="task-{task_json.id}" className="task-display" draggable="true" key={task_json.id} onDragStart={this.drag}>
+            <div className="task-display" draggable="true" key={task_json.id} onDragStart={this.drag}>
                 {task_json.title}
             </div>
         );
@@ -432,15 +433,15 @@ class TasksBoard extends React.Component {
             <div id="tasks-view">
                 <h2>Tasks</h2>
                 <div id="tasks-board">
-                    <div className="task-col" id="todo-col" onDrop={this.drop} onDragOver={this.allowDrop}>
+                    <div className="task-col" id="todo-col" onDrop={(event) => this.drop(event, "To Do")} onDragOver={this.allowDrop}>
                         <h3>To Do</h3>
                         {todo_tasks}
                     </div>
-                    <div className="task-col" id="progress-col" onDrop={this.drop} onDragOver={this.allowDrop}>
+                    <div className="task-col" id="progress-col" onDrop={(event) => this.drop(event, "In Progress")} onDragOver={this.allowDrop}>
                         <h3>In Progress</h3>
                         {in_progress_tasks}
                     </div>
-                    <div className="task-col" id="done-col" onDrop={this.drop} onDragOver={this.allowDrop}>
+                    <div className="task-col" id="done-col" onDrop={(event) => this.drop(event, "Done")} onDragOver={this.allowDrop}>
                         <h3>Done</h3>
                         {done_tasks}
                     </div>
