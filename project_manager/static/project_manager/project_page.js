@@ -470,7 +470,24 @@ var ProjectTaskbar = function (_React$Component5) {
     return ProjectTaskbar;
 }(React.Component);
 
-function GetTasks(deadline_id) {}
+var TasksBoard = function (_React$Component6) {
+    _inherits(TasksBoard, _React$Component6);
+
+    function TasksBoard() {
+        _classCallCheck(this, TasksBoard);
+
+        return _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).apply(this, arguments));
+    }
+
+    _createClass(TasksBoard, [{
+        key: 'render',
+        value: function render() {
+            return React.createElement('div', null);
+        }
+    }]);
+
+    return TasksBoard;
+}(React.Component);
 
 // =========================================================================
 

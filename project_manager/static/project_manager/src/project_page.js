@@ -334,8 +334,12 @@ class ProjectTaskbar extends React.Component {
     }
 }
 
-function GetTasks(deadline_id) {
-
+class TasksBoard extends React.Component {
+    render() {
+        return (
+            <div></div>
+        );
+    }
 }
 
 // =========================================================================
