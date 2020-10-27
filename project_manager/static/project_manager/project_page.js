@@ -319,9 +319,22 @@ var Project = function (_React$Component4) {
             }
         }
     }, {
+        key: 'hideTaskForm',
+        value: function hideTaskForm() {
+            var hide_form = document.querySelector('#task-form');
+            if (hide_form) {
+                hide_form.style.display = "none";
+            }
+        }
+    }, {
         key: 'openDeadlineForm',
         value: function openDeadlineForm() {
             document.querySelector("#deadline-form").style.display = "block";
+        }
+    }, {
+        key: 'openTaskForm',
+        value: function openTaskForm() {
+            document.querySelector("task-form").style.display = "block";
         }
     }, {
         key: 'selectDeadline',
@@ -386,6 +399,12 @@ var Project = function (_React$Component4) {
                         onSubmit: this.updateDeadlines,
                         cancel_response: this.hideDeadlineForm
                     }),
+                    React.createElement(CreateTaskForm, {
+                        project_id: this.state.project_id,
+                        project_deadlines: this.state.project_deadlines,
+                        onSubmit: this.hideDeadlineForm // will likely change this to an update tasks later
+                        , cancel_response: this.hideDeadlineForm
+                    }),
                     React.createElement(ProjectTaskbar, {
                         deadline_click: this.openDeadlineForm
                     })
@@ -399,8 +418,15 @@ var Project = function (_React$Component4) {
                         onSubmit: this.updateDeadlines,
                         cancel_response: this.hideDeadlineForm
                     }),
+                    React.createElement(CreateTaskForm, {
+                        project_id: this.state.project_id,
+                        project_deadlines: this.state.project_deadlines,
+                        onSubmit: this.hideDeadlineForm // will likely change this to an update tasks later
+                        , cancel_response: this.hideDeadlineForm
+                    }),
                     React.createElement(ProjectTaskbar, {
-                        deadline_click: this.openDeadlineForm
+                        deadline_click: this.openDeadlineForm,
+                        task_click: this.openTaskForm
                     })
                 );
             }
@@ -432,7 +458,7 @@ var ProjectTaskbar = function (_React$Component5) {
                 ),
                 React.createElement(
                     'button',
-                    { className: 'btn btn-light' },
+                    { className: 'btn btn-light', onClick: this.props.task_click },
                     'Create Task'
                 )
             );

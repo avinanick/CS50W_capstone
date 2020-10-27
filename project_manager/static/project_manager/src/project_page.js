@@ -217,8 +217,19 @@ class Project extends React.Component {
         }
     }
 
+    hideTaskForm() {
+        let hide_form = document.querySelector('#task-form');
+        if(hide_form) {
+            hide_form.style.display = "none";
+        }
+    }
+
     openDeadlineForm() {
         document.querySelector("#deadline-form").style.display = "block";
+    }
+
+    openTaskForm() {
+        document.querySelector("task-form").style.display = "block";
     }
 
     selectDeadline(id) {
@@ -274,6 +285,12 @@ class Project extends React.Component {
                     onSubmit={this.updateDeadlines}
                     cancel_response={this.hideDeadlineForm}
                     />
+                    <CreateTaskForm 
+                    project_id={this.state.project_id}
+                    project_deadlines={this.state.project_deadlines}
+                    onSubmit={this.hideDeadlineForm} // will likely change this to an update tasks later
+                    cancel_response={this.hideDeadlineForm}
+                    />
                     <ProjectTaskbar 
                     deadline_click={this.openDeadlineForm}
                     />
@@ -288,8 +305,15 @@ class Project extends React.Component {
                     onSubmit={this.updateDeadlines}
                     cancel_response={this.hideDeadlineForm}
                     />
+                    <CreateTaskForm 
+                    project_id={this.state.project_id}
+                    project_deadlines={this.state.project_deadlines}
+                    onSubmit={this.hideDeadlineForm} // will likely change this to an update tasks later
+                    cancel_response={this.hideDeadlineForm}
+                    />
                     <ProjectTaskbar 
                     deadline_click={this.openDeadlineForm}
+                    task_click={this.openTaskForm}
                     />
                 </div>
             );
@@ -302,7 +326,7 @@ class ProjectTaskbar extends React.Component {
         return(
             <div className='bottom-taskbar'>
                 <button className="btn btn-light" onClick={this.props.deadline_click}>Create Deadline</button>
-                <button className="btn btn-light">Create Task</button>
+                <button className="btn btn-light" onClick={this.props.task_click}>Create Task</button>
             </div>
         );
     }
