@@ -180,5 +180,6 @@ def tasks(request, project_id, deadline_id):
         "description": task.description,
         "date_created": task.date_created.strftime("%m/%d/%Y"),
         "flow_status": task.flow_status.name,
-        "creator": task.creator.username
+        "creator": task.creator.username,
+        "id": task.id
         } for task in requested_tasks]})
