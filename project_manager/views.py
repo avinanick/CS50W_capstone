@@ -66,7 +66,7 @@ def create_task(request):
         description=data["description"],
         title=data["title"],
         project=linked_project,
-        flow_status=Workflow.objects.get(name="To DO")
+        flow_status=Workflow.objects.get(name="To Do")
     )
     if Deadline.objects.filter(id=data["deadline_id"]).exists():
         new_task.deadline = Deadline.objects.get(id=data["deadline_id"])
