@@ -119,6 +119,10 @@ def project(request, project_id):
     project_accessed = Project.objects.filter(id=project_id)
     if project_accessed.count() < 1:
         return # STUB: Need an error page to show
+    requested_project = Project.objects.get(id=project_id)
+    member_check = Membership.objects.filter(member=request.user, project=requested_project)
+    if not member_check:
+        return JsonResponse({"error": "User not authorized for project,"}, status=400)
 
     return render(request, "project_manager/project_page.html", {
         "project_id": project_id
@@ -158,3 +162,23 @@ def register(request):
         return redirect("index")
     else:
         return render(request, "project_manager/register.html")
+
+@login_required
+def tasks(request, project_id, deadline_id):
+    requested_project = Project.objects.get(id=project_id)
+    member_check = Membership.objects.filter(member=request.user, project=requested_project)
+    if not member_check:
+        return JsonResponse({"error": "User not authorized for project,"}, status=400)
+    
+    if Deadline.objects.filter(id=deadline_id).exists():
+        requested_tasks = Task.objects.filter(project=requested_project, deadline=Deadline.objects.get(id=deadline_id))
+    else:
+        requested_tasks = Task.objects.filter(project=requested_project, deadline__isnull=True)
+
+    return JsonResponse({"tasks": [{
+        "title": task.title,
+        "description": task.description,
+        "date_created": task.date_created.strftime("%m/%d/%Y"),
+        "flow_status": task.flow_status.name,
+        "creator": task.creator.username
+        } for task in requested_tasks]})
