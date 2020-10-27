@@ -336,6 +336,7 @@ var Project = function (_React$Component4) {
             if (hide_form) {
                 hide_form.style.display = "none";
             }
+            this.updateTasks(this.state.section.id);
         }
     }, {
         key: 'openDeadlineForm',
@@ -356,7 +357,7 @@ var Project = function (_React$Component4) {
                     id: id,
                     state: "tasks"
                 } });
-            this.updateTasks();
+            this.updateTasks(id);
         }
     }, {
         key: 'selectTask',
@@ -389,36 +390,33 @@ var Project = function (_React$Component4) {
         }
     }, {
         key: 'updateTasks',
-        value: function updateTasks() {
+        value: function updateTasks(deadline_id) {
             var _this10 = this;
 
-            this.hideTaskForm();
             // if the current state section id is greater than 0, get the 
             // tasks that go with that deadline id, otherwise do nothing
-            if (this.state.section.id > 0) {
-                fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id).then(function (response) {
-                    return response.json();
-                }).then(function (tasks) {
+            fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id).then(function (response) {
+                return response.json();
+            }).then(function (tasks) {
 
-                    console.log(tasks);
+                console.log(tasks);
 
-                    var tasks_list = [];
+                var tasks_list = [];
 
-                    for (var i = 0; i < tasks.tasks.length; i++) {
+                for (var i = 0; i < tasks.tasks.length; i++) {
 
-                        tasks_list = tasks_list.concat([{
-                            title: tasks.tasks[i].title,
-                            id: tasks.tasks[i].id,
-                            date_created: tasks.tasks[i].date_created,
-                            description: tasks.tasks[i].description,
-                            flow_status: tasks.tasks[i].flow_status,
-                            creator: tasks.tasks[i].creator
-                        }]);
-                    }
+                    tasks_list = tasks_list.concat([{
+                        title: tasks.tasks[i].title,
+                        id: tasks.tasks[i].id,
+                        date_created: tasks.tasks[i].date_created,
+                        description: tasks.tasks[i].description,
+                        flow_status: tasks.tasks[i].flow_status,
+                        creator: tasks.tasks[i].creator
+                    }]);
+                }
 
-                    _this10.setState({ deadline_tasks: tasks_list });
-                });
-            }
+                _this10.setState({ deadline_tasks: tasks_list });
+            });
         }
     }, {
         key: 'render',
@@ -447,7 +445,7 @@ var Project = function (_React$Component4) {
                     React.createElement(CreateTaskForm, {
                         project_id: this.state.project_id,
                         project_deadlines: this.state.project_deadlines,
-                        onSubmit: this.updateTasks,
+                        onSubmit: this.hideTaskForm,
                         cancel_response: this.hideTaskForm
                     }),
                     React.createElement(ProjectTaskbar, {
@@ -471,7 +469,7 @@ var Project = function (_React$Component4) {
                     React.createElement(CreateTaskForm, {
                         project_id: this.state.project_id,
                         project_deadlines: this.state.project_deadlines,
-                        onSubmit: this.updateTasks,
+                        onSubmit: this.hideTaskForm,
                         cancel_response: this.hideTaskForm
                     }),
                     React.createElement(ProjectTaskbar, {
@@ -551,7 +549,7 @@ var TasksBoard = function (_React$Component6) {
         value: function renderTask(task_json) {
             return React.createElement(
                 'div',
-                { id: 'task-{task_json.id}', className: 'task-display', draggable: 'true', key: task_json.id, ondragstart: this.drag },
+                { id: 'task-{task_json.id}', className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: this.drag },
                 task_json.title
             );
         }
@@ -588,7 +586,7 @@ var TasksBoard = function (_React$Component6) {
                     { id: 'tasks-board' },
                     React.createElement(
                         'div',
-                        { className: 'task-col', id: 'todo-col', ondrop: this.drop, ondragover: this.allowDrop },
+                        { className: 'task-col', id: 'todo-col', onDrop: this.drop, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
                             null,
@@ -598,7 +596,7 @@ var TasksBoard = function (_React$Component6) {
                     ),
                     React.createElement(
                         'div',
-                        { className: 'task-col', id: 'progress-col', ondrop: this.drop, ondragover: this.allowDrop },
+                        { className: 'task-col', id: 'progress-col', onDrop: this.drop, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
                             null,
@@ -608,7 +606,7 @@ var TasksBoard = function (_React$Component6) {
                     ),
                     React.createElement(
                         'div',
-                        { className: 'task-col', id: 'done-col', ondrop: this.drop, ondragover: this.allowDrop },
+                        { className: 'task-col', id: 'done-col', onDrop: this.drop, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
                             null,

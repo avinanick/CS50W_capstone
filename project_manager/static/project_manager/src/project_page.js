@@ -232,6 +232,7 @@ class Project extends React.Component {
         if(hide_form) {
             hide_form.style.display = "none";
         }
+        this.updateTasks(this.state.section.id);
     }
 
     openDeadlineForm() {
@@ -249,7 +250,7 @@ class Project extends React.Component {
             id: id,
             state: "tasks"
         }});
-        this.updateTasks();
+        this.updateTasks(id);
     }
 
     selectTask(id) {
@@ -279,36 +280,33 @@ class Project extends React.Component {
         })
     }
 
-    updateTasks() {
-        this.hideTaskForm();
+    updateTasks(deadline_id) {
         // if the current state section id is greater than 0, get the 
         // tasks that go with that deadline id, otherwise do nothing
-        if(this.state.section.id > 0) {
-            fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id)
-            .then(response => response.json())
-            .then(tasks => {
+        fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id)
+        .then(response => response.json())
+        .then(tasks => {
 
-                console.log(tasks);
+            console.log(tasks);
 
-                let tasks_list = [];
+            let tasks_list = [];
 
-                for(let i=0; i < tasks.tasks.length; i++) {
-                    
-                    tasks_list = tasks_list.concat([{
-                        title: tasks.tasks[i].title,
-                        id: tasks.tasks[i].id,
-                        date_created: tasks.tasks[i].date_created,
-                        description: tasks.tasks[i].description,
-                        flow_status: tasks.tasks[i].flow_status,
-                        creator: tasks.tasks[i].creator
-                    }]);
+            for(let i=0; i < tasks.tasks.length; i++) {
+                
+                tasks_list = tasks_list.concat([{
+                    title: tasks.tasks[i].title,
+                    id: tasks.tasks[i].id,
+                    date_created: tasks.tasks[i].date_created,
+                    description: tasks.tasks[i].description,
+                    flow_status: tasks.tasks[i].flow_status,
+                    creator: tasks.tasks[i].creator
+                }]);
 
-                }
+            }
 
-                this.setState({deadline_tasks: tasks_list});
+            this.setState({deadline_tasks: tasks_list});
 
-            })
-        }
+        })
     }
 
     render() {
@@ -333,7 +331,7 @@ class Project extends React.Component {
                     <CreateTaskForm 
                     project_id={this.state.project_id}
                     project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.updateTasks}
+                    onSubmit={this.hideTaskForm}
                     cancel_response={this.hideTaskForm}
                     />
 
@@ -361,7 +359,7 @@ class Project extends React.Component {
                     <CreateTaskForm 
                     project_id={this.state.project_id}
                     project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.updateTasks} 
+                    onSubmit={this.hideTaskForm} 
                     cancel_response={this.hideTaskForm}
                     />
 
@@ -406,7 +404,7 @@ class TasksBoard extends React.Component {
 
     renderTask(task_json) {
         return (
-            <div id="task-{task_json.id}" className="task-display" draggable="true" key={task_json.id} ondragstart={this.drag}>
+            <div id="task-{task_json.id}" className="task-display" draggable="true" key={task_json.id} onDragStart={this.drag}>
                 {task_json.title}
             </div>
         );
@@ -434,15 +432,15 @@ class TasksBoard extends React.Component {
             <div id="tasks-view">
                 <h2>Tasks</h2>
                 <div id="tasks-board">
-                    <div className="task-col" id="todo-col" ondrop={this.drop} ondragover={this.allowDrop}>
+                    <div className="task-col" id="todo-col" onDrop={this.drop} onDragOver={this.allowDrop}>
                         <h3>To Do</h3>
                         {todo_tasks}
                     </div>
-                    <div className="task-col" id="progress-col" ondrop={this.drop} ondragover={this.allowDrop}>
+                    <div className="task-col" id="progress-col" onDrop={this.drop} onDragOver={this.allowDrop}>
                         <h3>In Progress</h3>
                         {in_progress_tasks}
                     </div>
-                    <div className="task-col" id="done-col" ondrop={this.drop} ondragover={this.allowDrop}>
+                    <div className="task-col" id="done-col" onDrop={this.drop} onDragOver={this.allowDrop}>
                         <h3>Done</h3>
                         {done_tasks}
                     </div>
