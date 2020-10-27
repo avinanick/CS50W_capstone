@@ -305,6 +305,8 @@ var Project = function (_React$Component4) {
         _this8.selectDeadline = _this8.selectDeadline.bind(_this8);
         _this8.selectTask = _this8.selectTask.bind(_this8);
         _this8.updateDeadlines = _this8.updateDeadlines.bind(_this8);
+        _this8.updateTasks = _this8.updateTasks.bind(_this8);
+        _this8.exitTasksView = _this8.exitTasksView.bind(_this8);
         var project_root = document.getElementById("project-root");
         _this8.state.project_id = project_root.dataset.projectid;
         _this8.updateDeadlines();
@@ -312,6 +314,14 @@ var Project = function (_React$Component4) {
     }
 
     _createClass(Project, [{
+        key: 'exitTasksView',
+        value: function exitTasksView() {
+            this.setState({ section: {
+                    id: 0,
+                    state: "deadlines"
+                } });
+        }
+    }, {
         key: 'hideDeadlineForm',
         value: function hideDeadlineForm() {
             var hide_form = document.querySelector("#deadline-form");
@@ -346,6 +356,7 @@ var Project = function (_React$Component4) {
                     id: id,
                     state: "tasks"
                 } });
+            this.updateTasks();
         }
     }, {
         key: 'selectTask',
@@ -377,9 +388,42 @@ var Project = function (_React$Component4) {
             });
         }
     }, {
+        key: 'updateTasks',
+        value: function updateTasks() {
+            var _this10 = this;
+
+            this.hideTaskForm();
+            // if the current state section id is greater than 0, get the 
+            // tasks that go with that deadline id, otherwise do nothing
+            if (this.state.section.id > 0) {
+                fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id).then(function (response) {
+                    return response.json();
+                }).then(function (tasks) {
+
+                    console.log(tasks);
+
+                    var tasks_list = [];
+
+                    for (var i = 0; i < tasks.tasks.length; i++) {
+
+                        tasks_list = tasks_list.concat([{
+                            title: tasks.tasks[i].title,
+                            id: tasks.tasks[i].id,
+                            date_created: tasks.tasks[i].date_created,
+                            description: tasks.tasks[i].description,
+                            flow_status: tasks.tasks[i].flow_status,
+                            creator: tasks.tasks[i].creator
+                        }]);
+                    }
+
+                    _this10.setState({ deadline_tasks: tasks_list });
+                });
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
-            var _this10 = this;
+            var _this11 = this;
 
             // This should check what state the page is in, and render
             // as appropriate
@@ -392,7 +436,7 @@ var Project = function (_React$Component4) {
                     React.createElement(DeadlineList, {
                         deadlines: this.state.project_deadlines,
                         onClick: function onClick(i) {
-                            return _this10.selectDeadline(i);
+                            return _this11.selectDeadline(i);
                         }
                     }),
                     React.createElement(CreateDeadlineForm, {
@@ -403,8 +447,8 @@ var Project = function (_React$Component4) {
                     React.createElement(CreateTaskForm, {
                         project_id: this.state.project_id,
                         project_deadlines: this.state.project_deadlines,
-                        onSubmit: this.hideTaskForm // will likely change this to an update tasks later
-                        , cancel_response: this.hideTaskForm
+                        onSubmit: this.updateTasks,
+                        cancel_response: this.hideTaskForm
                     }),
                     React.createElement(ProjectTaskbar, {
                         deadline_click: this.openDeadlineForm,
@@ -415,6 +459,10 @@ var Project = function (_React$Component4) {
                 return React.createElement(
                     'div',
                     null,
+                    React.createElement(TasksBoard, {
+                        tasks: this.state.deadline_tasks,
+                        exitTasks: this.exitTasksView
+                    }),
                     React.createElement(CreateDeadlineForm, {
                         project_id: this.state.project_id,
                         onSubmit: this.updateDeadlines,
@@ -423,8 +471,8 @@ var Project = function (_React$Component4) {
                     React.createElement(CreateTaskForm, {
                         project_id: this.state.project_id,
                         project_deadlines: this.state.project_deadlines,
-                        onSubmit: this.hideTaskForm // will likely change this to an update tasks later
-                        , cancel_response: this.hideTaskForm
+                        onSubmit: this.updateTasks,
+                        cancel_response: this.hideTaskForm
                     }),
                     React.createElement(ProjectTaskbar, {
                         deadline_click: this.openDeadlineForm,
@@ -480,12 +528,53 @@ var TasksBoard = function (_React$Component6) {
     }
 
     _createClass(TasksBoard, [{
+        key: 'allowDrop',
+        value: function allowDrop(event) {
+            event.preventDefault();
+        }
+    }, {
+        key: 'drag',
+        value: function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+    }, {
+        key: 'drop',
+        value: function drop(event) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            event.target.appendChild(document.getElementById(data));
+            // This needs to be updated to send a put request to update
+            // the task workflow
+        }
+    }, {
         key: 'renderTask',
-        value: function renderTask(task_json) {}
+        value: function renderTask(task_json) {
+            return React.createElement(
+                'div',
+                { id: 'task-{task_json.id}', className: 'task-display', draggable: 'true', key: task_json.id, ondragstart: this.drag },
+                task_json.title
+            );
+        }
     }, {
         key: 'render',
         value: function render() {
             // Update return to give custom headline
+            var todo_tasks = [];
+            var in_progress_tasks = [];
+            var done_tasks = [];
+
+            for (var i = 0; i < this.props.tasks.length; i++) {
+                if (this.props.tasks[i].flow_status === "To Do") {
+                    todo_tasks.push(this.renderTask(this.props.tasks[i]));
+                }
+                if (this.props.tasks[i].flow_status === "In Progress") {
+                    in_progress_tasks.push(this.renderTask(this.props.tasks[i]));
+                }
+                if (this.props.tasks[i].flow_status === "Done") {
+                    done_tasks.push(this.renderTask(this.props.tasks[i]));
+                }
+            }
+
             return React.createElement(
                 'div',
                 { id: 'tasks-view' },
@@ -497,9 +586,36 @@ var TasksBoard = function (_React$Component6) {
                 React.createElement(
                     'div',
                     { id: 'tasks-board' },
-                    React.createElement('div', { className: 'task-col', id: 'todo-col' }),
-                    React.createElement('div', { className: 'task-col', id: 'progress-col' }),
-                    React.createElement('div', { className: 'task-col', id: 'done-col' })
+                    React.createElement(
+                        'div',
+                        { className: 'task-col', id: 'todo-col', ondrop: this.drop, ondragover: this.allowDrop },
+                        React.createElement(
+                            'h3',
+                            null,
+                            'To Do'
+                        ),
+                        todo_tasks
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'task-col', id: 'progress-col', ondrop: this.drop, ondragover: this.allowDrop },
+                        React.createElement(
+                            'h3',
+                            null,
+                            'In Progress'
+                        ),
+                        in_progress_tasks
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'task-col', id: 'done-col', ondrop: this.drop, ondragover: this.allowDrop },
+                        React.createElement(
+                            'h3',
+                            null,
+                            'Done'
+                        ),
+                        done_tasks
+                    )
                 ),
                 React.createElement(
                     'button',

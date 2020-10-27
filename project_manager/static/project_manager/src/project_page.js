@@ -206,9 +206,18 @@ class Project extends React.Component {
         this.selectDeadline = this.selectDeadline.bind(this);
         this.selectTask = this.selectTask.bind(this);
         this.updateDeadlines = this.updateDeadlines.bind(this);
+        this.updateTasks = this.updateTasks.bind(this);
+        this.exitTasksView = this.exitTasksView.bind(this);
         let project_root = document.getElementById("project-root");
         this.state.project_id = project_root.dataset.projectid;
         this.updateDeadlines();
+    }
+
+    exitTasksView() {
+        this.setState({section: {
+            id: 0,
+            state: "deadlines"
+        }});
     }
 
     hideDeadlineForm() {
@@ -240,6 +249,7 @@ class Project extends React.Component {
             id: id,
             state: "tasks"
         }});
+        this.updateTasks();
     }
 
     selectTask(id) {
@@ -269,6 +279,38 @@ class Project extends React.Component {
         })
     }
 
+    updateTasks() {
+        this.hideTaskForm();
+        // if the current state section id is greater than 0, get the 
+        // tasks that go with that deadline id, otherwise do nothing
+        if(this.state.section.id > 0) {
+            fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id)
+            .then(response => response.json())
+            .then(tasks => {
+
+                console.log(tasks);
+
+                let tasks_list = [];
+
+                for(let i=0; i < tasks.tasks.length; i++) {
+                    
+                    tasks_list = tasks_list.concat([{
+                        title: tasks.tasks[i].title,
+                        id: tasks.tasks[i].id,
+                        date_created: tasks.tasks[i].date_created,
+                        description: tasks.tasks[i].description,
+                        flow_status: tasks.tasks[i].flow_status,
+                        creator: tasks.tasks[i].creator
+                    }]);
+
+                }
+
+                this.setState({deadline_tasks: tasks_list});
+
+            })
+        }
+    }
+
     render() {
         // This should check what state the page is in, and render
         // as appropriate
@@ -281,17 +323,20 @@ class Project extends React.Component {
                     deadlines={this.state.project_deadlines}
                     onClick={i => this.selectDeadline(i)}
                     />
+
                     <CreateDeadlineForm 
                     project_id={this.state.project_id}
                     onSubmit={this.updateDeadlines}
                     cancel_response={this.hideDeadlineForm}
                     />
+
                     <CreateTaskForm 
                     project_id={this.state.project_id}
                     project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.hideTaskForm} // will likely change this to an update tasks later
+                    onSubmit={this.updateTasks}
                     cancel_response={this.hideTaskForm}
                     />
+
                     <ProjectTaskbar 
                     deadline_click={this.openDeadlineForm}
                     task_click={this.openTaskForm}
@@ -302,17 +347,24 @@ class Project extends React.Component {
         else {
             return (
                 <div>
+                    <TasksBoard 
+                    tasks={this.state.deadline_tasks}
+                    exitTasks={this.exitTasksView}
+                    />
+
                     <CreateDeadlineForm 
                     project_id={this.state.project_id}
                     onSubmit={this.updateDeadlines}
                     cancel_response={this.hideDeadlineForm}
                     />
+
                     <CreateTaskForm 
                     project_id={this.state.project_id}
                     project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.hideTaskForm} // will likely change this to an update tasks later
+                    onSubmit={this.updateTasks} 
                     cancel_response={this.hideTaskForm}
                     />
+
                     <ProjectTaskbar 
                     deadline_click={this.openDeadlineForm}
                     task_click={this.openTaskForm}
@@ -336,19 +388,64 @@ class ProjectTaskbar extends React.Component {
 
 class TasksBoard extends React.Component {
 
-    renderTask(task_json) {
+    allowDrop(event) {
+        event.preventDefault();
+    }
 
+    drag(event) {
+        event.dataTransfer.setData("text", event.target.id);
+    }
+
+    drop(event) {
+        event.preventDefault();
+        let data = event.dataTransfer.getData("text");
+        event.target.appendChild(document.getElementById(data));
+        // This needs to be updated to send a put request to update
+        // the task workflow
+    }
+
+    renderTask(task_json) {
+        return (
+            <div id="task-{task_json.id}" className="task-display" draggable="true" key={task_json.id} ondragstart={this.drag}>
+                {task_json.title}
+            </div>
+        );
     }
 
     render() {
         // Update return to give custom headline
+        let todo_tasks = [];
+        let in_progress_tasks = [];
+        let done_tasks = [];
+
+        for(let i=0; i < this.props.tasks.length; i++) {
+            if(this.props.tasks[i].flow_status === "To Do") {
+                todo_tasks.push(this.renderTask(this.props.tasks[i]));
+            }
+            if(this.props.tasks[i].flow_status === "In Progress") {
+                in_progress_tasks.push(this.renderTask(this.props.tasks[i]));
+            }
+            if(this.props.tasks[i].flow_status === "Done") {
+                done_tasks.push(this.renderTask(this.props.tasks[i]));
+            }
+        }
+
         return (
             <div id="tasks-view">
                 <h2>Tasks</h2>
                 <div id="tasks-board">
-                    <div className="task-col" id="todo-col"></div>
-                    <div className="task-col" id="progress-col"></div>
-                    <div className="task-col" id="done-col"></div>
+                    <div className="task-col" id="todo-col" ondrop={this.drop} ondragover={this.allowDrop}>
+                        <h3>To Do</h3>
+                        {todo_tasks}
+                    </div>
+                    <div className="task-col" id="progress-col" ondrop={this.drop} ondragover={this.allowDrop}>
+                        <h3>In Progress</h3>
+                        {in_progress_tasks}
+                    </div>
+                    <div className="task-col" id="done-col" ondrop={this.drop} ondragover={this.allowDrop}>
+                        <h3>Done</h3>
+                        {done_tasks}
+                    </div>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={this.props.exitTasks}>Deadlines</button>
             </div>
