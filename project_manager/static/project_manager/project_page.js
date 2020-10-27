@@ -182,9 +182,10 @@ var CreateTaskForm = function (_React$Component2) {
         value: function render() {
             // Need to figure out the deadline select
             var deadline_options = [];
-            for (var i = 0; i < this.props.project_deadlines; i++) {
-                deadline_options.push(deadlineOption(this.props.project_deadlines[i]));
+            for (var i = 0; i < this.props.project_deadlines.length; i++) {
+                deadline_options.push(this.deadlineOption(this.props.project_deadlines[i]));
             }
+            //console.log(deadline_options);
             return React.createElement(
                 'div',
                 { className: 'overlay-form', id: 'task-form' },
@@ -270,7 +271,7 @@ var DeadlineList = function (_React$Component3) {
                         { className: 'deadline-container', onClick: function onClick() {
                                 return _this7.props.onClick(-1);
                             }, key: '-1' },
-                        'Unsortted'
+                        'Unsorted'
                     )
                 );
             } else {
@@ -334,7 +335,7 @@ var Project = function (_React$Component4) {
     }, {
         key: 'openTaskForm',
         value: function openTaskForm() {
-            document.querySelector("task-form").style.display = "block";
+            document.querySelector("#task-form").style.display = "block";
         }
     }, {
         key: 'selectDeadline',
@@ -402,11 +403,12 @@ var Project = function (_React$Component4) {
                     React.createElement(CreateTaskForm, {
                         project_id: this.state.project_id,
                         project_deadlines: this.state.project_deadlines,
-                        onSubmit: this.hideDeadlineForm // will likely change this to an update tasks later
-                        , cancel_response: this.hideDeadlineForm
+                        onSubmit: this.hideTaskForm // will likely change this to an update tasks later
+                        , cancel_response: this.hideTaskForm
                     }),
                     React.createElement(ProjectTaskbar, {
-                        deadline_click: this.openDeadlineForm
+                        deadline_click: this.openDeadlineForm,
+                        task_click: this.openTaskForm
                     })
                 );
             } else {
@@ -421,8 +423,8 @@ var Project = function (_React$Component4) {
                     React.createElement(CreateTaskForm, {
                         project_id: this.state.project_id,
                         project_deadlines: this.state.project_deadlines,
-                        onSubmit: this.hideDeadlineForm // will likely change this to an update tasks later
-                        , cancel_response: this.hideDeadlineForm
+                        onSubmit: this.hideTaskForm // will likely change this to an update tasks later
+                        , cancel_response: this.hideTaskForm
                     }),
                     React.createElement(ProjectTaskbar, {
                         deadline_click: this.openDeadlineForm,

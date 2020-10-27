@@ -133,9 +133,10 @@ class CreateTaskForm extends React.Component {
     render() {
         // Need to figure out the deadline select
         let deadline_options = [];
-        for(let i=0; i < this.props.project_deadlines; i++) {
-            deadline_options.push(deadlineOption(this.props.project_deadlines[i]));
+        for(let i=0; i < this.props.project_deadlines.length; i++) {
+            deadline_options.push(this.deadlineOption(this.props.project_deadlines[i]));
         }
+        //console.log(deadline_options);
         return (
             <div className="overlay-form" id="task-form">
                 <form onSubmit={this.submit_response} >
@@ -176,7 +177,7 @@ class DeadlineList extends React.Component {
                 <div>
                     {items}
                     <div className="deadline-container" onClick={() => this.props.onClick(-1)} key="-1">
-                        Unsortted
+                        Unsorted
                     </div>
                 </div>
             );
@@ -229,7 +230,7 @@ class Project extends React.Component {
     }
 
     openTaskForm() {
-        document.querySelector("task-form").style.display = "block";
+        document.querySelector("#task-form").style.display = "block";
     }
 
     selectDeadline(id) {
@@ -288,11 +289,12 @@ class Project extends React.Component {
                     <CreateTaskForm 
                     project_id={this.state.project_id}
                     project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.hideDeadlineForm} // will likely change this to an update tasks later
-                    cancel_response={this.hideDeadlineForm}
+                    onSubmit={this.hideTaskForm} // will likely change this to an update tasks later
+                    cancel_response={this.hideTaskForm}
                     />
                     <ProjectTaskbar 
                     deadline_click={this.openDeadlineForm}
+                    task_click={this.openTaskForm}
                     />
                 </div>
             );
@@ -308,8 +310,8 @@ class Project extends React.Component {
                     <CreateTaskForm 
                     project_id={this.state.project_id}
                     project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.hideDeadlineForm} // will likely change this to an update tasks later
-                    cancel_response={this.hideDeadlineForm}
+                    onSubmit={this.hideTaskForm} // will likely change this to an update tasks later
+                    cancel_response={this.hideTaskForm}
                     />
                     <ProjectTaskbar 
                     deadline_click={this.openDeadlineForm}
