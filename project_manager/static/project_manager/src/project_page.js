@@ -385,13 +385,21 @@ class ProjectTaskbar extends React.Component {
 }
 
 class TasksBoard extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            dragged_task: -1
+        }
+    }
 
     allowDrop(event) {
         event.preventDefault();
     }
 
-    drag(event) {
+    drag(event, task_id) {
         event.dataTransfer.setData("text", event.target.id);
+        this.state.dragged_task = task_id;
     }
 
     drop(event, new_flow) {
@@ -401,11 +409,13 @@ class TasksBoard extends React.Component {
         // This needs to be updated to send a put request to update
         // the task workflow
         console.log(new_flow);
+        console.log(this.state.dragged_task);
     }
 
     renderTask(task_json) {
+        let task_id = "task" + task_json.id;
         return (
-            <div className="task-display" draggable="true" key={task_json.id} onDragStart={this.drag}>
+            <div id={task_id} className="task-display" draggable="true" key={task_json.id} onDragStart={(event) => this.drag(event, task_json.id)}>
                 {task_json.title}
             </div>
         );
