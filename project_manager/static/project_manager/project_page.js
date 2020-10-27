@@ -480,9 +480,33 @@ var TasksBoard = function (_React$Component6) {
     }
 
     _createClass(TasksBoard, [{
+        key: 'renderTask',
+        value: function renderTask(task_json) {}
+    }, {
         key: 'render',
         value: function render() {
-            return React.createElement('div', null);
+            // Update return to give custom headline
+            return React.createElement(
+                'div',
+                { id: 'tasks-view' },
+                React.createElement(
+                    'h2',
+                    null,
+                    'Tasks'
+                ),
+                React.createElement(
+                    'div',
+                    { id: 'tasks-board' },
+                    React.createElement('div', { className: 'task-col', id: 'todo-col' }),
+                    React.createElement('div', { className: 'task-col', id: 'progress-col' }),
+                    React.createElement('div', { className: 'task-col', id: 'done-col' })
+                ),
+                React.createElement(
+                    'button',
+                    { type: 'button', className: 'btn btn-primary', onClick: this.props.exitTasks },
+                    'Deadlines'
+                )
+            );
         }
     }]);
 

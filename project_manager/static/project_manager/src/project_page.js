@@ -335,9 +335,23 @@ class ProjectTaskbar extends React.Component {
 }
 
 class TasksBoard extends React.Component {
+
+    renderTask(task_json) {
+
+    }
+
     render() {
+        // Update return to give custom headline
         return (
-            <div></div>
+            <div id="tasks-view">
+                <h2>Tasks</h2>
+                <div id="tasks-board">
+                    <div className="task-col" id="todo-col"></div>
+                    <div className="task-col" id="progress-col"></div>
+                    <div className="task-col" id="done-col"></div>
+                </div>
+                <button type="button" className="btn btn-primary" onClick={this.props.exitTasks}>Deadlines</button>
+            </div>
         );
     }
 }
