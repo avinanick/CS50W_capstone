@@ -73,6 +73,87 @@ class CreateDeadlineForm extends React.Component {
     }
 }
 
+class CreateTaskForm extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            linked_project: parseInt(this.props.project_id),
+            title: "",
+            description: "",
+            linked_deadline: -1
+        }
+
+        this.submit_response = this.submit_response.bind(this);
+        this.deadlineChanged = this.deadlineChanged.bind(this);
+        this.descriptionChanged = this.descriptionChanged.bind(this);
+        this.titleChanged = this.titleChanged.bind(this);
+    }
+
+    deadlineChanged(event) {
+        this.setState({linked_deadline: parseInt(event.target.value)});
+    }
+
+    deadlineOption(deadline_json) {
+        return (
+            <option value={deadline_json.id} key={deadline_json.id}>{deadline_json.date}</option>
+        );
+    }
+
+    descriptionChanged(event) {
+        this.setState({description: event.target.value});
+    }
+
+    submit_response(event) {
+        event.preventDefault();
+
+        const csrftoken = getCookie('csrftoken');
+
+        fetch('/create_task', {
+        headers: {'X-CSRFToken': csrftoken},
+        method: 'POST',
+        body: JSON.stringify({
+            //content: post_content
+            project_id: parseInt(this.state.linked_project),
+            title: this.state.title,
+            description: this.state.description,
+            deadline_id: this.state.linked_deadline
+            })
+        })
+        .then(response => {
+            console.log(response);
+            this.props.onSubmit();
+        })
+    }
+
+    titleChanged(event) {
+        this.setState({title: event.target.value});
+    }
+
+    render() {
+        // Need to figure out the deadline select
+        let deadline_options = [];
+        for(let i=0; i < this.props.project_deadlines; i++) {
+            deadline_options.push(deadlineOption(this.props.project_deadlines[i]));
+        }
+        return (
+            <div className="overlay-form" id="task-form">
+                <form onSubmit={this.submit_response} >
+                    <h3>Create Task</h3>
+                    <input type="text" name="task-title" id="task-title" placeholder="Task Title" maxLength="1024" onChange={this.titleChanged} />
+                    <input type="text" name="task-description" id="task-description" placeholder="Task Description" onChange={this.descriptionChanged} />
+                    <select name="deadlines" id="deadlines" onChange={this.deadlineChanged}>
+                        {deadline_options}
+                        <option value="-1">None</option>
+                    </select>
+                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="button" className="btn btn-primary" onClick={this.props.cancel_response}>Cancel</button>
+                </form>
+            </div>
+        );
+    }
+}
+
 class DeadlineList extends React.Component {
     renderDeadline(deadline_json) {
         return (
