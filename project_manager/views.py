@@ -173,7 +173,7 @@ def update_task(request):
         task_to_update.save()
         return JsonResponse({"message": "Task workflow updated"}, status=201)
     else:
-        return JsonResponse({"error": "Unsupported request method."}. status=400)
+        return JsonResponse({"error": "Unsupported request method."}, status=400)
 
 @login_required
 def tasks(request, project_id, deadline_id):
