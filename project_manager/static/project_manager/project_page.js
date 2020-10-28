@@ -241,9 +241,11 @@ var DeadlineList = function (_React$Component3) {
         value: function renderDeadline(deadline_json) {
             var _this6 = this;
 
+            console.log(deadline_json.id);
+            var deadline_id_name = "deadline-" + deadline_json.id;
             return React.createElement(
                 'div',
-                { className: 'deadline-container', onClick: function onClick() {
+                { id: deadline_id_name, className: 'deadline-container', onClick: function onClick() {
                         return _this6.props.onClick(deadline_json.id);
                     }, key: deadline_json.id },
                 'Deadline: ',
@@ -255,28 +257,24 @@ var DeadlineList = function (_React$Component3) {
         value: function render() {
             var _this7 = this;
 
-            if (this.props.deadlines.length > 0) {
-                var items = [];
+            var items = [];
 
-                for (var i = 0; i < this.props.deadlines.length; i++) {
-                    items.push(this.renderDeadline(this.props.deadlines[i]));
-                }
-
-                return React.createElement(
-                    'div',
-                    null,
-                    items,
-                    React.createElement(
-                        'div',
-                        { className: 'deadline-container', onClick: function onClick() {
-                                return _this7.props.onClick(-1);
-                            }, key: '-1' },
-                        'Unsorted'
-                    )
-                );
-            } else {
-                return React.createElement('div', null);
+            for (var i = 0; i < this.props.deadlines.length; i++) {
+                items.push(this.renderDeadline(this.props.deadlines[i]));
             }
+
+            return React.createElement(
+                'div',
+                null,
+                items,
+                React.createElement(
+                    'div',
+                    { className: 'deadline-container', onClick: function onClick() {
+                            return _this7.props.onClick(0);
+                        }, key: '-1' },
+                    'Unsorted'
+                )
+            );
         }
     }]);
 
@@ -395,11 +393,9 @@ var Project = function (_React$Component4) {
 
             // if the current state section id is greater than 0, get the 
             // tasks that go with that deadline id, otherwise do nothing
-            fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id).then(function (response) {
+            fetch('/get_tasks/' + this.state.project_id + '/' + deadline_id).then(function (response) {
                 return response.json();
             }).then(function (tasks) {
-
-                console.log(tasks);
 
                 var tasks_list = [];
 
@@ -421,8 +417,6 @@ var Project = function (_React$Component4) {
     }, {
         key: 'render',
         value: function render() {
-            var _this11 = this;
-
             // This should check what state the page is in, and render
             // as appropriate
             // I need to make the bottom bar section next, and likely move
@@ -433,9 +427,7 @@ var Project = function (_React$Component4) {
                     null,
                     React.createElement(DeadlineList, {
                         deadlines: this.state.project_deadlines,
-                        onClick: function onClick(i) {
-                            return _this11.selectDeadline(i);
-                        }
+                        onClick: this.selectDeadline
                     }),
                     React.createElement(CreateDeadlineForm, {
                         project_id: this.state.project_id,
@@ -522,12 +514,12 @@ var TasksBoard = function (_React$Component6) {
     function TasksBoard(props) {
         _classCallCheck(this, TasksBoard);
 
-        var _this13 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
+        var _this12 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
 
-        _this13.state = {
+        _this12.state = {
             dragged_task: -1
         };
-        return _this13;
+        return _this12;
     }
 
     _createClass(TasksBoard, [{
@@ -551,17 +543,31 @@ var TasksBoard = function (_React$Component6) {
             // the task workflow
             console.log(new_flow);
             console.log(this.state.dragged_task);
+
+            var csrftoken = getCookie('csrftoken');
+
+            fetch('/update_task', {
+                headers: { 'X-CSRFToken': csrftoken },
+                method: 'PUT',
+                body: JSON.stringify({
+                    //content: post_content
+                    task_id: parseInt(this.state.dragged_task),
+                    workflow: new_flow
+                })
+            }).then(function (response) {
+                console.log(response);
+            });
         }
     }, {
         key: 'renderTask',
         value: function renderTask(task_json) {
-            var _this14 = this;
+            var _this13 = this;
 
             var task_id = "task" + task_json.id;
             return React.createElement(
                 'div',
                 { id: task_id, className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: function onDragStart(event) {
-                        return _this14.drag(event, task_json.id);
+                        return _this13.drag(event, task_json.id);
                     } },
                 task_json.title
             );
@@ -569,7 +575,7 @@ var TasksBoard = function (_React$Component6) {
     }, {
         key: 'render',
         value: function render() {
-            var _this15 = this;
+            var _this14 = this;
 
             // Update return to give custom headline
             var todo_tasks = [];
@@ -602,7 +608,7 @@ var TasksBoard = function (_React$Component6) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'todo-col', onDrop: function onDrop(event) {
-                                return _this15.drop(event, "To Do");
+                                return _this14.drop(event, "To Do");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -614,7 +620,7 @@ var TasksBoard = function (_React$Component6) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'progress-col', onDrop: function onDrop(event) {
-                                return _this15.drop(event, "In Progress");
+                                return _this14.drop(event, "In Progress");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -626,7 +632,7 @@ var TasksBoard = function (_React$Component6) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'done-col', onDrop: function onDrop(event) {
-                                return _this15.drop(event, "Done");
+                                return _this14.drop(event, "Done");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',

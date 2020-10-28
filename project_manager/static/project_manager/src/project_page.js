@@ -157,8 +157,10 @@ class CreateTaskForm extends React.Component {
 
 class DeadlineList extends React.Component {
     renderDeadline(deadline_json) {
+        console.log(deadline_json.id);
+        let deadline_id_name = "deadline-" + deadline_json.id;
         return (
-            <div className="deadline-container" onClick={() => this.props.onClick(deadline_json.id)} key={deadline_json.id}>
+            <div id={deadline_id_name} className="deadline-container" onClick={() => this.props.onClick(deadline_json.id)} key={deadline_json.id}>
                 Deadline: {deadline_json.date}
             </div>
         );
@@ -166,25 +168,20 @@ class DeadlineList extends React.Component {
 
     render() {
 
-        if(this.props.deadlines.length > 0) {
-            const items = []
+        let items=[];
 
-            for(let i=0; i < this.props.deadlines.length; i++) {
-                items.push(this.renderDeadline(this.props.deadlines[i]));
-            }
+        for(let i=0; i < this.props.deadlines.length; i++) {
+            items.push(this.renderDeadline(this.props.deadlines[i]));
+        }
 
-            return (
-                <div>
-                    {items}
-                    <div className="deadline-container" onClick={() => this.props.onClick(-1)} key="-1">
-                        Unsorted
-                    </div>
+        return (
+            <div>
+                {items}
+                <div className="deadline-container" onClick={() => this.props.onClick(0)} key="-1">
+                    Unsorted
                 </div>
-            );
-        }
-        else {
-            return <div></div>;
-        }
+            </div>
+        );
             
     };
 }
@@ -283,11 +280,9 @@ class Project extends React.Component {
     updateTasks(deadline_id) {
         // if the current state section id is greater than 0, get the 
         // tasks that go with that deadline id, otherwise do nothing
-        fetch('/get_tasks/' + this.state.project_id + '/' + this.state.section.id)
+        fetch('/get_tasks/' + this.state.project_id + '/' + deadline_id)
         .then(response => response.json())
         .then(tasks => {
-
-            console.log(tasks);
 
             let tasks_list = [];
 
@@ -319,7 +314,7 @@ class Project extends React.Component {
                 <div>
                     <DeadlineList
                     deadlines={this.state.project_deadlines}
-                    onClick={i => this.selectDeadline(i)}
+                    onClick={this.selectDeadline}
                     />
 
                     <CreateDeadlineForm 
@@ -410,6 +405,21 @@ class TasksBoard extends React.Component {
         // the task workflow
         console.log(new_flow);
         console.log(this.state.dragged_task);
+
+        const csrftoken = getCookie('csrftoken');
+
+        fetch('/update_task', {
+        headers: {'X-CSRFToken': csrftoken},
+        method: 'PUT',
+        body: JSON.stringify({
+            //content: post_content
+            task_id: parseInt(this.state.dragged_task),
+            workflow: new_flow
+            })
+        })
+        .then(response => {
+            console.log(response);
+        })
     }
 
     renderTask(task_json) {
