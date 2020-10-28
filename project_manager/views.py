@@ -164,6 +164,18 @@ def register(request):
         return render(request, "project_manager/register.html")
 
 @login_required
+def update_task(request):
+    if request.method == "PUT":
+        # update the workflow
+        data = json.loads(request.body)
+        task_to_update = Task.objects.get(id=data["task_id"])
+        task_to_update.flow_status = Workflow.objects.get(name=data["workflow"])
+        task_to_update.save()
+        return JsonResponse({"message": "Task workflow updated"}, status=201)
+    else:
+        return JsonResponse({"error": "Unsupported request method."}. status=400)
+
+@login_required
 def tasks(request, project_id, deadline_id):
     requested_project = Project.objects.get(id=project_id)
     member_check = Membership.objects.filter(member=request.user, project=requested_project)
