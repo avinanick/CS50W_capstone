@@ -508,18 +508,69 @@ var ProjectTaskbar = function (_React$Component5) {
     return ProjectTaskbar;
 }(React.Component);
 
-var TasksBoard = function (_React$Component6) {
-    _inherits(TasksBoard, _React$Component6);
+var ManageUsers = function (_React$Component6) {
+    _inherits(ManageUsers, _React$Component6);
+
+    function ManageUsers() {
+        _classCallCheck(this, ManageUsers);
+
+        return _possibleConstructorReturn(this, (ManageUsers.__proto__ || Object.getPrototypeOf(ManageUsers)).apply(this, arguments));
+    }
+
+    _createClass(ManageUsers, [{
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'div',
+                { className: 'overlay-form', id: 'memberships-form' },
+                React.createElement(
+                    'form',
+                    null,
+                    React.createElement(
+                        'h3',
+                        null,
+                        'Manage Users'
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'form-group row' },
+                        React.createElement(
+                            'label',
+                            { 'for': 'member-invite', className: 'col-auto' },
+                            'Invite Member'
+                        ),
+                        React.createElement('input', { id: 'member-invite', className: 'col-auto form-control', type: 'text', placeholder: 'Member name' }),
+                        React.createElement(
+                            'button',
+                            { type: 'button', className: 'btn btn-primary col-auto' },
+                            'Invite'
+                        )
+                    ),
+                    React.createElement(
+                        'button',
+                        { type: 'button', onClick: this.props.close_form },
+                        'Close'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return ManageUsers;
+}(React.Component);
+
+var TasksBoard = function (_React$Component7) {
+    _inherits(TasksBoard, _React$Component7);
 
     function TasksBoard(props) {
         _classCallCheck(this, TasksBoard);
 
-        var _this12 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
+        var _this13 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
 
-        _this12.state = {
+        _this13.state = {
             dragged_task: -1
         };
-        return _this12;
+        return _this13;
     }
 
     _createClass(TasksBoard, [{
@@ -561,13 +612,13 @@ var TasksBoard = function (_React$Component6) {
     }, {
         key: 'renderTask',
         value: function renderTask(task_json) {
-            var _this13 = this;
+            var _this14 = this;
 
             var task_id = "task" + task_json.id;
             return React.createElement(
                 'div',
                 { id: task_id, className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: function onDragStart(event) {
-                        return _this13.drag(event, task_json.id);
+                        return _this14.drag(event, task_json.id);
                     } },
                 task_json.title
             );
@@ -575,7 +626,7 @@ var TasksBoard = function (_React$Component6) {
     }, {
         key: 'render',
         value: function render() {
-            var _this14 = this;
+            var _this15 = this;
 
             // Update return to give custom headline
             var todo_tasks = [];
@@ -608,7 +659,7 @@ var TasksBoard = function (_React$Component6) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'todo-col', onDrop: function onDrop(event) {
-                                return _this14.drop(event, "To Do");
+                                return _this15.drop(event, "To Do");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -620,7 +671,7 @@ var TasksBoard = function (_React$Component6) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'progress-col', onDrop: function onDrop(event) {
-                                return _this14.drop(event, "In Progress");
+                                return _this15.drop(event, "In Progress");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -632,7 +683,7 @@ var TasksBoard = function (_React$Component6) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'done-col', onDrop: function onDrop(event) {
-                                return _this14.drop(event, "Done");
+                                return _this15.drop(event, "Done");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',

@@ -379,6 +379,24 @@ class ProjectTaskbar extends React.Component {
     }
 }
 
+class ManageUsers extends React.Component {
+    render() {
+        return(
+            <div className="overlay-form" id="memberships-form">
+                <form>
+                    <h3>Manage Users</h3>
+                    <div className="form-group row">
+                        <label for="member-invite" className="col-auto">Invite Member</label>
+                        <input id="member-invite" className="col-auto form-control" type="text" placeholder="Member name" />
+                        <button type="button" className="btn btn-primary col-auto">Invite</button>
+                    </div>
+                    <button type="button" onClick={this.props.close_form}>Close</button>
+                </form>
+            </div>
+        );
+    }
+}
+
 class TasksBoard extends React.Component {
     constructor(props) {
         super(props);
