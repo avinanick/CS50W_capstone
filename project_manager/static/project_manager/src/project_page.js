@@ -196,6 +196,17 @@ class EditTaskForm extends React.Component {
             description: this.props.task.description,
             linked_deadline: this.props.task.deadline_id
         }
+
+        this.deadlineChanged = this.deadlineChanged.bind(this);
+        this.descriptionChanged = this.descriptionChanged.bind(this);
+        this.titleChanged = this.titleChanged.bind(this);
+        this.submit_response = this.submit_response.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({title: nextProps.task.title});
+        this.setState({description: nextProps.task.description});
+        this.setState({linked_deadline: nextProps.task.deadline_id});
     }
 
     deadlineChanged(event) {
@@ -223,9 +234,10 @@ class EditTaskForm extends React.Component {
         body: JSON.stringify({
             //content: post_content
             task_id: parseInt(this.props.task.id),
+
             title: this.state.title,
             description: this.state.description,
-            deadline_id: this.state.linked_deadline
+            deadline_id: parseInt(this.state.linked_deadline)
             })
         })
         .then(response => {
@@ -244,16 +256,16 @@ class EditTaskForm extends React.Component {
         for(let i=0; i < this.props.project_deadlines.length; i++) {
             deadline_options.push(this.deadlineOption(this.props.project_deadlines[i]));
         }
-        //console.log(deadline_options);
+
         return (
             <div className="overlay-form" id="update-task-form">
                 <form onSubmit={this.submit_response} >
-                    <h3>Create Task</h3>
-                    <input type="text" name="task-title" id="task-title" placeholder="Task Title" maxLength="1024" onChange={this.titleChanged} />
-                    <input type="text" name="task-description" id="task-description" placeholder="Task Description" onChange={this.descriptionChanged} />
-                    <select name="deadlines" id="deadlines" onChange={this.deadlineChanged}>
+                    <h3>Edit Task</h3>
+                    <input type="text" name="task-title" id="task-title" placeholder="Task Title" maxLength="1024" onChange={this.titleChanged} value={this.state.title}/>
+                    <input type="text" name="task-description" id="task-description" placeholder="Task Description" onChange={this.descriptionChanged} value={this.state.description}/>
+                    <select name="deadlines" id="deadlines" onChange={this.deadlineChanged} value={this.state.linked_deadline}>
                         {deadline_options}
-                        <option value="-1">None</option>
+                        <option value="0">None</option>
                     </select>
                     <button type="submit" className="btn btn-primary">Submit</button>
                     <button type="button" className="btn btn-primary" onClick={this.props.cancel_response}>Cancel</button>
@@ -275,7 +287,8 @@ class Project extends React.Component {
                 id: 0
             },
             project_deadlines: [],
-            deadline_tasks: []
+            deadline_tasks: [],
+            selected_task: {}
         };
         this.selectDeadline = this.selectDeadline.bind(this);
         this.selectTask = this.selectTask.bind(this);
@@ -296,6 +309,13 @@ class Project extends React.Component {
 
     hideDeadlineForm() {
         let hide_form = document.querySelector("#deadline-form");
+        if(hide_form) {
+            hide_form.style.display = "none";
+        }
+    }
+
+    hideEditForm() {
+        let hide_form = document.querySelector("#update-task-form");
         if(hide_form) {
             hide_form.style.display = "none";
         }
@@ -327,9 +347,12 @@ class Project extends React.Component {
         this.updateTasks(id);
     }
 
-    selectTask(id) {
+    selectTask(task_json) {
         // change the state to the task with id and change the visible 
         // div to the id with information
+        this.setState({selected_task: task_json});
+        console.log("Selecting task linked to " + task_json.deadline_id);
+        document.querySelector("#update-task-form").style.display = "block";
     }
 
     updateDeadlines() {
@@ -371,7 +394,8 @@ class Project extends React.Component {
                     date_created: tasks.tasks[i].date_created,
                     description: tasks.tasks[i].description,
                     flow_status: tasks.tasks[i].flow_status,
-                    creator: tasks.tasks[i].creator
+                    creator: tasks.tasks[i].creator,
+                    deadline_id: tasks.tasks[i].deadline_id
                 }]);
 
             }
@@ -407,6 +431,14 @@ class Project extends React.Component {
                     cancel_response={this.hideTaskForm}
                     />
 
+                    <EditTaskForm 
+                    project_id={this.state.project_id}
+                    project_deadlines={this.state.project_deadlines}
+                    task={this.state.selected_task}
+                    onSubmit={this.hideEditForm}
+                    cancel_response={this.hideEditForm}
+                    />
+
                     <ProjectTaskbar 
                     deadline_click={this.openDeadlineForm}
                     task_click={this.openTaskForm}
@@ -420,6 +452,7 @@ class Project extends React.Component {
                     <TasksBoard 
                     tasks={this.state.deadline_tasks}
                     exitTasks={this.exitTasksView}
+                    task_click={this.selectTask}
                     />
 
                     <CreateDeadlineForm 
@@ -433,6 +466,14 @@ class Project extends React.Component {
                     project_deadlines={this.state.project_deadlines}
                     onSubmit={this.hideTaskForm} 
                     cancel_response={this.hideTaskForm}
+                    />
+
+                    <EditTaskForm 
+                    project_id={this.state.project_id}
+                    project_deadlines={this.state.project_deadlines}
+                    task={this.state.selected_task}
+                    onSubmit={this.hideEditForm}
+                    cancel_response={this.hideEditForm}
                     />
 
                     <ProjectTaskbar 
@@ -520,7 +561,7 @@ class TasksBoard extends React.Component {
     renderTask(task_json) {
         let task_id = "task" + task_json.id;
         return (
-            <div id={task_id} className="task-display" draggable="true" key={task_json.id} onDragStart={(event) => this.drag(event, task_json.id)}>
+            <div id={task_id} onClick={() => this.props.task_click(task_json)} className="task-display" draggable="true" key={task_json.id} onDragStart={(event) => this.drag(event, task_json.id)}>
                 {task_json.title}
             </div>
         );

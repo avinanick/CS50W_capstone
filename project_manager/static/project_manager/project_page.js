@@ -295,10 +295,22 @@ var EditTaskForm = function (_React$Component4) {
             description: _this8.props.task.description,
             linked_deadline: _this8.props.task.deadline_id
         };
+
+        _this8.deadlineChanged = _this8.deadlineChanged.bind(_this8);
+        _this8.descriptionChanged = _this8.descriptionChanged.bind(_this8);
+        _this8.titleChanged = _this8.titleChanged.bind(_this8);
+        _this8.submit_response = _this8.submit_response.bind(_this8);
         return _this8;
     }
 
     _createClass(EditTaskForm, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            this.setState({ title: nextProps.task.title });
+            this.setState({ description: nextProps.task.description });
+            this.setState({ linked_deadline: nextProps.task.deadline_id });
+        }
+    }, {
         key: 'deadlineChanged',
         value: function deadlineChanged(event) {
             this.setState({ linked_deadline: parseInt(event.target.value) });
@@ -332,9 +344,10 @@ var EditTaskForm = function (_React$Component4) {
                 body: JSON.stringify({
                     //content: post_content
                     task_id: parseInt(this.props.task.id),
+
                     title: this.state.title,
                     description: this.state.description,
-                    deadline_id: this.state.linked_deadline
+                    deadline_id: parseInt(this.state.linked_deadline)
                 })
             }).then(function (response) {
                 console.log(response);
@@ -354,7 +367,7 @@ var EditTaskForm = function (_React$Component4) {
             for (var i = 0; i < this.props.project_deadlines.length; i++) {
                 deadline_options.push(this.deadlineOption(this.props.project_deadlines[i]));
             }
-            //console.log(deadline_options);
+
             return React.createElement(
                 'div',
                 { className: 'overlay-form', id: 'update-task-form' },
@@ -364,17 +377,17 @@ var EditTaskForm = function (_React$Component4) {
                     React.createElement(
                         'h3',
                         null,
-                        'Create Task'
+                        'Edit Task'
                     ),
-                    React.createElement('input', { type: 'text', name: 'task-title', id: 'task-title', placeholder: 'Task Title', maxLength: '1024', onChange: this.titleChanged }),
-                    React.createElement('input', { type: 'text', name: 'task-description', id: 'task-description', placeholder: 'Task Description', onChange: this.descriptionChanged }),
+                    React.createElement('input', { type: 'text', name: 'task-title', id: 'task-title', placeholder: 'Task Title', maxLength: '1024', onChange: this.titleChanged, value: this.state.title }),
+                    React.createElement('input', { type: 'text', name: 'task-description', id: 'task-description', placeholder: 'Task Description', onChange: this.descriptionChanged, value: this.state.description }),
                     React.createElement(
                         'select',
-                        { name: 'deadlines', id: 'deadlines', onChange: this.deadlineChanged },
+                        { name: 'deadlines', id: 'deadlines', onChange: this.deadlineChanged, value: this.state.linked_deadline },
                         deadline_options,
                         React.createElement(
                             'option',
-                            { value: '-1' },
+                            { value: '0' },
                             'None'
                         )
                     ),
@@ -413,7 +426,8 @@ var Project = function (_React$Component5) {
                 id: 0
             },
             project_deadlines: [],
-            deadline_tasks: []
+            deadline_tasks: [],
+            selected_task: {}
         };
         _this10.selectDeadline = _this10.selectDeadline.bind(_this10);
         _this10.selectTask = _this10.selectTask.bind(_this10);
@@ -438,6 +452,14 @@ var Project = function (_React$Component5) {
         key: 'hideDeadlineForm',
         value: function hideDeadlineForm() {
             var hide_form = document.querySelector("#deadline-form");
+            if (hide_form) {
+                hide_form.style.display = "none";
+            }
+        }
+    }, {
+        key: 'hideEditForm',
+        value: function hideEditForm() {
+            var hide_form = document.querySelector("#update-task-form");
             if (hide_form) {
                 hide_form.style.display = "none";
             }
@@ -474,9 +496,12 @@ var Project = function (_React$Component5) {
         }
     }, {
         key: 'selectTask',
-        value: function selectTask(id) {
+        value: function selectTask(task_json) {
             // change the state to the task with id and change the visible 
             // div to the id with information
+            this.setState({ selected_task: task_json });
+            console.log("Selecting task linked to " + task_json.deadline_id);
+            document.querySelector("#update-task-form").style.display = "block";
         }
     }, {
         key: 'updateDeadlines',
@@ -522,7 +547,8 @@ var Project = function (_React$Component5) {
                         date_created: tasks.tasks[i].date_created,
                         description: tasks.tasks[i].description,
                         flow_status: tasks.tasks[i].flow_status,
-                        creator: tasks.tasks[i].creator
+                        creator: tasks.tasks[i].creator,
+                        deadline_id: tasks.tasks[i].deadline_id
                     }]);
                 }
 
@@ -555,6 +581,13 @@ var Project = function (_React$Component5) {
                         onSubmit: this.hideTaskForm,
                         cancel_response: this.hideTaskForm
                     }),
+                    React.createElement(EditTaskForm, {
+                        project_id: this.state.project_id,
+                        project_deadlines: this.state.project_deadlines,
+                        task: this.state.selected_task,
+                        onSubmit: this.hideEditForm,
+                        cancel_response: this.hideEditForm
+                    }),
                     React.createElement(ProjectTaskbar, {
                         deadline_click: this.openDeadlineForm,
                         task_click: this.openTaskForm
@@ -566,7 +599,8 @@ var Project = function (_React$Component5) {
                     null,
                     React.createElement(TasksBoard, {
                         tasks: this.state.deadline_tasks,
-                        exitTasks: this.exitTasksView
+                        exitTasks: this.exitTasksView,
+                        task_click: this.selectTask
                     }),
                     React.createElement(CreateDeadlineForm, {
                         project_id: this.state.project_id,
@@ -578,6 +612,13 @@ var Project = function (_React$Component5) {
                         project_deadlines: this.state.project_deadlines,
                         onSubmit: this.hideTaskForm,
                         cancel_response: this.hideTaskForm
+                    }),
+                    React.createElement(EditTaskForm, {
+                        project_id: this.state.project_id,
+                        project_deadlines: this.state.project_deadlines,
+                        task: this.state.selected_task,
+                        onSubmit: this.hideEditForm,
+                        cancel_response: this.hideEditForm
                     }),
                     React.createElement(ProjectTaskbar, {
                         deadline_click: this.openDeadlineForm,
@@ -732,7 +773,9 @@ var TasksBoard = function (_React$Component8) {
             var task_id = "task" + task_json.id;
             return React.createElement(
                 'div',
-                { id: task_id, className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: function onDragStart(event) {
+                { id: task_id, onClick: function onClick() {
+                        return _this16.props.task_click(task_json);
+                    }, className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: function onDragStart(event) {
                         return _this16.drag(event, task_json.id);
                     } },
                 task_json.title
