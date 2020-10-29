@@ -172,8 +172,18 @@ def update_task(request):
         task_to_update.flow_status = Workflow.objects.get(name=data["workflow"])
         task_to_update.save()
         return JsonResponse({"message": "Task workflow updated"}, status=201)
-    else:
-        return JsonResponse({"error": "Unsupported request method."}, status=400)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        task_to_update = Task.objects.get(id=data["task_id"])
+        task_to_update.title = data["title"]
+        task_to_update.description = data["description"]
+        task_to_update.deadline = Deadline.objects.get(id=data['deadline_id'])
+        task_to_update.save()
+        return JsonResponse({"message": "Task workflow updated"}, status=201)
+
+    return JsonResponse({"error": "Unsupported request method."}, status=400)
+
 
 @login_required
 def tasks(request, project_id, deadline_id):
