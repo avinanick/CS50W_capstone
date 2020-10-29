@@ -460,6 +460,7 @@ class Project extends React.Component {
             main_body.push(<ManageUsers 
                 authority_level={this.state.authority_level}
                 close_form={this.hideMembershipForm}
+                project_id={this.state.project_id}
                 />);
         }
 
@@ -527,10 +528,31 @@ class ManageUsers extends React.Component {
             managers: [],
             members: []
         }
+
+        this.updateUsers();
     }
 
     updateUsers() {
-        
+        fetch("/members/" + this.props.project_id)
+        .then(response => response.json())
+        .then(members => {
+            console.log(members);
+
+            let update_managers = [];
+            let update_members = [];
+
+            for(let i=0; i < members.members.length; i++) {
+                if(members.members[i].authority === "Manager") {
+                    update_managers.push(members.members[i].name);
+                }
+                if(members.members[i].authority === "Member") {
+                    update_members.push(members.members[i].name);
+                }
+            }
+
+            this.setState({managers: update_managers});
+            this.setState({members: update_members});
+        })
     }
 
     render() {
