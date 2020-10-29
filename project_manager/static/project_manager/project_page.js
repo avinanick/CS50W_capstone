@@ -744,7 +744,41 @@ var ManageUsers = function (_React$Component7) {
     }, {
         key: 'renderManagersSelect',
         value: function renderManagersSelect() {
-            return React.createElement('div', null);
+            // If the user isn't the owner, they shouldn't be able
+            // to modify any managers
+            if (this.props.authority_level != "Owner") {
+                return React.createElement('div', null);
+            }
+            var managerslist = [];
+
+            for (var i = 0; i < this.state.managers; i++) {
+                managerslist.push(this.renderOption(this.state.managers[i]));
+            }
+
+            return React.createElement(
+                'div',
+                null,
+                React.createElement(
+                    'label',
+                    { 'for': 'members-select' },
+                    'Members'
+                ),
+                React.createElement(
+                    'select',
+                    { name: 'members', id: 'members-select', multiple: true },
+                    managerslist
+                ),
+                React.createElement(
+                    'button',
+                    { type: 'button' },
+                    'Demote'
+                ),
+                React.createElement(
+                    'button',
+                    { type: 'button' },
+                    'Remove'
+                )
+            );
         }
     }, {
         key: 'renderMembersSelect',
@@ -752,7 +786,7 @@ var ManageUsers = function (_React$Component7) {
             var memberslist = [];
 
             for (var i = 0; i < this.state.members; i++) {
-                memberslist.push(this.renderOption(username));
+                memberslist.push(this.renderOption(this.state.members[i]));
             }
 
             var promote_button = [];
@@ -767,6 +801,11 @@ var ManageUsers = function (_React$Component7) {
             return React.createElement(
                 'div',
                 null,
+                React.createElement(
+                    'label',
+                    { 'for': 'members-select' },
+                    'Members'
+                ),
                 React.createElement(
                     'select',
                     { name: 'members', id: 'members-select', multiple: true },

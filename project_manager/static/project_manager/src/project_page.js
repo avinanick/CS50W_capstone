@@ -556,8 +556,26 @@ class ManageUsers extends React.Component {
     }
 
     renderManagersSelect() {
+        // If the user isn't the owner, they shouldn't be able
+        // to modify any managers
+        if(this.props.authority_level != "Owner") {
+            return (<div></div>);
+        }
+        let managerslist = [];
+
+        for(let i=0; i<this.state.managers; i++) {
+            managerslist.push(this.renderOption(this.state.managers[i]));
+        }
+
         return (
-            <div></div>
+            <div>
+                <label for="members-select">Members</label>
+                <select name="members" id="members-select" multiple>
+                    {managerslist}
+                </select>
+                <button type="button">Demote</button>
+                <button type="button">Remove</button>
+            </div>
         );
     }
 
@@ -565,7 +583,7 @@ class ManageUsers extends React.Component {
         let memberslist = [];
 
         for(let i=0; i<this.state.members; i++) {
-            memberslist.push(this.renderOption(username));
+            memberslist.push(this.renderOption(this.state.members[i]));
         }
 
         let promote_button = [];
@@ -575,6 +593,7 @@ class ManageUsers extends React.Component {
 
         return (
             <div>
+                <label for="members-select">Members</label>
                 <select name="members" id="members-select" multiple>
                     {memberslist}
                 </select>
