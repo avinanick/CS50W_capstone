@@ -288,7 +288,8 @@ class Project extends React.Component {
             },
             project_deadlines: [],
             deadline_tasks: [],
-            selected_task: {}
+            selected_task: {},
+            authority_level: ""
         };
         this.selectDeadline = this.selectDeadline.bind(this);
         this.selectTask = this.selectTask.bind(this);
@@ -298,6 +299,7 @@ class Project extends React.Component {
         let project_root = document.getElementById("project-root");
         this.state.project_id = project_root.dataset.projectid;
         this.updateDeadlines();
+        this.getAuthority();
     }
 
     exitTasksView() {
@@ -305,6 +307,15 @@ class Project extends React.Component {
             id: 0,
             state: "deadlines"
         }});
+    }
+
+    getAuthority() {
+        fetch("/authority/" + this.state.project_id)
+        .then(response => response.json())
+        .then(auth => {
+            console.log(auth);
+            this.setState({authority_level: auth.auth_level});
+        })
     }
 
     hideDeadlineForm() {
@@ -410,79 +421,59 @@ class Project extends React.Component {
         // as appropriate
         // I need to make the bottom bar section next, and likely move
         // the if statement before the return
-        if(this.state.section.state === "deadlines") {
+        if(this.state.authority_level === "none") {
             return (
                 <div>
-                    <DeadlineList
-                    deadlines={this.state.project_deadlines}
-                    onClick={this.selectDeadline}
-                    />
-
-                    <CreateDeadlineForm 
-                    project_id={this.state.project_id}
-                    onSubmit={this.updateDeadlines}
-                    cancel_response={this.hideDeadlineForm}
-                    />
-
-                    <CreateTaskForm 
-                    project_id={this.state.project_id}
-                    project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.hideTaskForm}
-                    cancel_response={this.hideTaskForm}
-                    />
-
-                    <EditTaskForm 
-                    project_id={this.state.project_id}
-                    project_deadlines={this.state.project_deadlines}
-                    task={this.state.selected_task}
-                    onSubmit={this.hideEditForm}
-                    cancel_response={this.hideEditForm}
-                    />
-
-                    <ProjectTaskbar 
-                    deadline_click={this.openDeadlineForm}
-                    task_click={this.openTaskForm}
-                    />
+                    Error: User not authorized for project.
                 </div>
             );
+        }
+
+        let main_body = [];
+        if(this.state.section.state === "deadlines") {
+            main_body.push(<DeadlineList
+                deadlines={this.state.project_deadlines}
+                onClick={this.selectDeadline}
+                />);
         }
         else {
-            return (
-                <div>
-                    <TasksBoard 
-                    tasks={this.state.deadline_tasks}
-                    exitTasks={this.exitTasksView}
-                    task_click={this.selectTask}
-                    />
-
-                    <CreateDeadlineForm 
-                    project_id={this.state.project_id}
-                    onSubmit={this.updateDeadlines}
-                    cancel_response={this.hideDeadlineForm}
-                    />
-
-                    <CreateTaskForm 
-                    project_id={this.state.project_id}
-                    project_deadlines={this.state.project_deadlines}
-                    onSubmit={this.hideTaskForm} 
-                    cancel_response={this.hideTaskForm}
-                    />
-
-                    <EditTaskForm 
-                    project_id={this.state.project_id}
-                    project_deadlines={this.state.project_deadlines}
-                    task={this.state.selected_task}
-                    onSubmit={this.hideEditForm}
-                    cancel_response={this.hideEditForm}
-                    />
-
-                    <ProjectTaskbar 
-                    deadline_click={this.openDeadlineForm}
-                    task_click={this.openTaskForm}
-                    />
-                </div>
-            );
+            main_body.push(<TasksBoard 
+                tasks={this.state.deadline_tasks}
+                exitTasks={this.exitTasksView}
+                task_click={this.selectTask}
+                />);
         }
+        return (
+            <div>
+                {main_body}
+
+                <CreateDeadlineForm 
+                project_id={this.state.project_id}
+                onSubmit={this.updateDeadlines}
+                cancel_response={this.hideDeadlineForm}
+                />
+
+                <CreateTaskForm 
+                project_id={this.state.project_id}
+                project_deadlines={this.state.project_deadlines}
+                onSubmit={this.hideTaskForm}
+                cancel_response={this.hideTaskForm}
+                />
+
+                <EditTaskForm 
+                project_id={this.state.project_id}
+                project_deadlines={this.state.project_deadlines}
+                task={this.state.selected_task}
+                onSubmit={this.hideEditForm}
+                cancel_response={this.hideEditForm}
+                />
+
+                <ProjectTaskbar 
+                deadline_click={this.openDeadlineForm}
+                task_click={this.openTaskForm}
+                />
+            </div>
+        );
     }
 }
 
