@@ -178,7 +178,10 @@ def update_task(request):
         task_to_update = Task.objects.get(id=data["task_id"])
         task_to_update.title = data["title"]
         task_to_update.description = data["description"]
-        task_to_update.deadline = Deadline.objects.get(id=data['deadline_id'])
+        if Deadline.objects.filter(id=data["deadline_id"]).count() > 0:
+            task_to_update.deadline = Deadline.objects.get(id=data["deadline_id"])
+        else:
+            task_to_update.deadline = None
         task_to_update.save()
         return JsonResponse({"message": "Task workflow updated"}, status=201)
 
@@ -194,14 +197,24 @@ def tasks(request, project_id, deadline_id):
     
     if Deadline.objects.filter(id=deadline_id).exists():
         requested_tasks = Task.objects.filter(project=requested_project, deadline=Deadline.objects.get(id=deadline_id))
+        return JsonResponse({"tasks": [{
+            "title": task.title,
+            "description": task.description,
+            "date_created": task.date_created.strftime("%m/%d/%Y"),
+            "flow_status": task.flow_status.name,
+            "creator": task.creator.username,
+            "id": task.id,
+            "deadline_id": task.deadline.id
+            } for task in requested_tasks]})
     else:
         requested_tasks = Task.objects.filter(project=requested_project, deadline__isnull=True)
 
-    return JsonResponse({"tasks": [{
-        "title": task.title,
-        "description": task.description,
-        "date_created": task.date_created.strftime("%m/%d/%Y"),
-        "flow_status": task.flow_status.name,
-        "creator": task.creator.username,
-        "id": task.id
-        } for task in requested_tasks]})
+        return JsonResponse({"tasks": [{
+            "title": task.title,
+            "description": task.description,
+            "date_created": task.date_created.strftime("%m/%d/%Y"),
+            "flow_status": task.flow_status.name,
+            "creator": task.creator.username,
+            "id": task.id,
+            "deadline_id": 0
+            } for task in requested_tasks]})
