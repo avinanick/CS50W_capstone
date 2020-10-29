@@ -14,6 +14,13 @@ def index(request):
     return render(request, "project_manager/index.html")
 
 @login_required
+def authority(request, project_id):
+    if not Membership.objects.get(project=Project.objects.get(id=project_id), member=request.user).exists():
+        return JsonResponse({"auth_level": "none"})
+    member_set = Membership.objects.get(project=Project.objects.get(id=project_id), member=request.user)
+    return JsonResponse({"auth_level": member_set.auth_level.level})
+
+@login_required
 def create_deadline(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
