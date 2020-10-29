@@ -612,7 +612,7 @@ var Project = function (_React$Component5) {
             }
 
             // Need to double check if this is the actual authority level name
-            if (this.state.authority_level != "member") {
+            if (this.state.authority_level != "Member") {
                 main_body.push(React.createElement(ManageUsers, {
                     authority_level: this.state.authority_level,
                     close_form: this.hideMembershipForm
@@ -667,13 +667,13 @@ var ProjectTaskbar = function (_React$Component6) {
         key: 'render',
         value: function render() {
             var member_button = [];
-            if (this.props.authority_level != "member") {
+            if (this.props.authority_level != "Member") {
                 member_button.push(React.createElement(
                     'button',
                     {
                         className: 'btn btn-light',
                         onClick: this.props.member_click },
-                    'Create Deadline'
+                    'Edit Members'
                 ));
             }
             return React.createElement(
@@ -709,6 +709,9 @@ var ManageUsers = function (_React$Component7) {
     _createClass(ManageUsers, [{
         key: 'render',
         value: function render() {
+
+            if (this.props.authority_level === "Owner") {}
+
             return React.createElement(
                 'div',
                 { className: 'overlay-form', id: 'memberships-form' },
@@ -722,22 +725,22 @@ var ManageUsers = function (_React$Component7) {
                     ),
                     React.createElement(
                         'div',
-                        { className: 'form-group row' },
+                        { className: '' },
                         React.createElement(
                             'label',
-                            { 'for': 'member-invite', className: 'col-auto' },
+                            { 'for': 'member-invite', className: '' },
                             'Invite Member'
                         ),
-                        React.createElement('input', { id: 'member-invite', className: 'col-auto form-control', type: 'text', placeholder: 'Member name' }),
+                        React.createElement('input', { id: 'member-invite', className: '', type: 'text', placeholder: 'Member name' }),
                         React.createElement(
                             'button',
-                            { type: 'button', className: 'btn btn-primary col-auto' },
+                            { type: 'button', className: 'btn btn-primary' },
                             'Invite'
                         )
                     ),
                     React.createElement(
                         'button',
-                        { type: 'button', onClick: this.props.close_form },
+                        { type: 'button', className: 'btn btn-primary', onClick: this.props.close_form },
                         'Close'
                     )
                 )

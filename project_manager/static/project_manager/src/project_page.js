@@ -456,7 +456,7 @@ class Project extends React.Component {
         }
 
         // Need to double check if this is the actual authority level name
-        if(this.state.authority_level != "member") {
+        if(this.state.authority_level != "Member") {
             main_body.push(<ManageUsers 
                 authority_level={this.state.authority_level}
                 close_form={this.hideMembershipForm}
@@ -502,11 +502,11 @@ class Project extends React.Component {
 class ProjectTaskbar extends React.Component {
     render() {
         let member_button = [];
-        if(this.props.authority_level != "member") {
+        if(this.props.authority_level != "Member") {
             member_button.push(<button 
                 className="btn btn-light" 
                 onClick={this.props.member_click}>
-                    Create Deadline
+                    Edit Members
                 </button>);
         }
         return(
@@ -521,16 +521,21 @@ class ProjectTaskbar extends React.Component {
 
 class ManageUsers extends React.Component {
     render() {
+
+        if(this.props.authority_level === "Owner") {
+
+        }
+
         return(
             <div className="overlay-form" id="memberships-form">
                 <form>
                     <h3>Manage Users</h3>
-                    <div className="form-group row">
-                        <label for="member-invite" className="col-auto">Invite Member</label>
-                        <input id="member-invite" className="col-auto form-control" type="text" placeholder="Member name" />
-                        <button type="button" className="btn btn-primary col-auto">Invite</button>
+                    <div className="">
+                        <label for="member-invite" className="">Invite Member</label>
+                        <input id="member-invite" className="" type="text" placeholder="Member name" />
+                        <button type="button" className="btn btn-primary">Invite</button>
                     </div>
-                    <button type="button" onClick={this.props.close_form}>Close</button>
+                    <button type="button" className="btn btn-primary" onClick={this.props.close_form}>Close</button>
                 </form>
             </div>
         );
