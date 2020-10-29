@@ -32,5 +32,8 @@ class Membership(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="members")
     auth_level = models.ForeignKey("Authority", on_delete=models.PROTECT, related_name="level_members")
 
+    class Meta:
+        unique_together = ("member", "project")
+
 class Workflow(models.Model):
     name = models.CharField(max_length=15)
