@@ -281,17 +281,132 @@ var DeadlineList = function (_React$Component3) {
     return DeadlineList;
 }(React.Component);
 
-var Project = function (_React$Component4) {
-    _inherits(Project, _React$Component4);
+var EditTaskForm = function (_React$Component4) {
+    _inherits(EditTaskForm, _React$Component4);
+
+    function EditTaskForm(props) {
+        _classCallCheck(this, EditTaskForm);
+
+        var _this8 = _possibleConstructorReturn(this, (EditTaskForm.__proto__ || Object.getPrototypeOf(EditTaskForm)).call(this, props));
+
+        _this8.state = {
+            linked_project: parseInt(_this8.props.project_id),
+            title: _this8.props.task.title,
+            description: _this8.props.task.description,
+            linked_deadline: _this8.props.task.deadline_id
+        };
+        return _this8;
+    }
+
+    _createClass(EditTaskForm, [{
+        key: 'deadlineChanged',
+        value: function deadlineChanged(event) {
+            this.setState({ linked_deadline: parseInt(event.target.value) });
+        }
+    }, {
+        key: 'deadlineOption',
+        value: function deadlineOption(deadline_json) {
+            return React.createElement(
+                'option',
+                { value: deadline_json.id, key: deadline_json.id },
+                deadline_json.date
+            );
+        }
+    }, {
+        key: 'descriptionChanged',
+        value: function descriptionChanged(event) {
+            this.setState({ description: event.target.value });
+        }
+    }, {
+        key: 'submit_response',
+        value: function submit_response(event) {
+            var _this9 = this;
+
+            event.preventDefault();
+
+            var csrftoken = getCookie('csrftoken');
+
+            fetch('/update_task', {
+                headers: { 'X-CSRFToken': csrftoken },
+                method: 'POST',
+                body: JSON.stringify({
+                    //content: post_content
+                    task_id: parseInt(this.props.task.id),
+                    title: this.state.title,
+                    description: this.state.description,
+                    deadline_id: this.state.linked_deadline
+                })
+            }).then(function (response) {
+                console.log(response);
+                _this9.props.onSubmit();
+            });
+        }
+    }, {
+        key: 'titleChanged',
+        value: function titleChanged(event) {
+            this.setState({ title: event.target.value });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            // Need to figure out the deadline select
+            var deadline_options = [];
+            for (var i = 0; i < this.props.project_deadlines.length; i++) {
+                deadline_options.push(this.deadlineOption(this.props.project_deadlines[i]));
+            }
+            //console.log(deadline_options);
+            return React.createElement(
+                'div',
+                { className: 'overlay-form', id: 'update-task-form' },
+                React.createElement(
+                    'form',
+                    { onSubmit: this.submit_response },
+                    React.createElement(
+                        'h3',
+                        null,
+                        'Create Task'
+                    ),
+                    React.createElement('input', { type: 'text', name: 'task-title', id: 'task-title', placeholder: 'Task Title', maxLength: '1024', onChange: this.titleChanged }),
+                    React.createElement('input', { type: 'text', name: 'task-description', id: 'task-description', placeholder: 'Task Description', onChange: this.descriptionChanged }),
+                    React.createElement(
+                        'select',
+                        { name: 'deadlines', id: 'deadlines', onChange: this.deadlineChanged },
+                        deadline_options,
+                        React.createElement(
+                            'option',
+                            { value: '-1' },
+                            'None'
+                        )
+                    ),
+                    React.createElement(
+                        'button',
+                        { type: 'submit', className: 'btn btn-primary' },
+                        'Submit'
+                    ),
+                    React.createElement(
+                        'button',
+                        { type: 'button', className: 'btn btn-primary', onClick: this.props.cancel_response },
+                        'Cancel'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EditTaskForm;
+}(React.Component);
+
+var Project = function (_React$Component5) {
+    _inherits(Project, _React$Component5);
 
     function Project(props) {
         _classCallCheck(this, Project);
 
         // I need to check the div for which project I'm loading so I can fetch the
         // correct deadlines
-        var _this8 = _possibleConstructorReturn(this, (Project.__proto__ || Object.getPrototypeOf(Project)).call(this, props));
+        var _this10 = _possibleConstructorReturn(this, (Project.__proto__ || Object.getPrototypeOf(Project)).call(this, props));
 
-        _this8.state = {
+        _this10.state = {
             project_id: 0,
             section: {
                 state: "deadlines",
@@ -300,15 +415,15 @@ var Project = function (_React$Component4) {
             project_deadlines: [],
             deadline_tasks: []
         };
-        _this8.selectDeadline = _this8.selectDeadline.bind(_this8);
-        _this8.selectTask = _this8.selectTask.bind(_this8);
-        _this8.updateDeadlines = _this8.updateDeadlines.bind(_this8);
-        _this8.updateTasks = _this8.updateTasks.bind(_this8);
-        _this8.exitTasksView = _this8.exitTasksView.bind(_this8);
+        _this10.selectDeadline = _this10.selectDeadline.bind(_this10);
+        _this10.selectTask = _this10.selectTask.bind(_this10);
+        _this10.updateDeadlines = _this10.updateDeadlines.bind(_this10);
+        _this10.updateTasks = _this10.updateTasks.bind(_this10);
+        _this10.exitTasksView = _this10.exitTasksView.bind(_this10);
         var project_root = document.getElementById("project-root");
-        _this8.state.project_id = project_root.dataset.projectid;
-        _this8.updateDeadlines();
-        return _this8;
+        _this10.state.project_id = project_root.dataset.projectid;
+        _this10.updateDeadlines();
+        return _this10;
     }
 
     _createClass(Project, [{
@@ -366,7 +481,7 @@ var Project = function (_React$Component4) {
     }, {
         key: 'updateDeadlines',
         value: function updateDeadlines() {
-            var _this9 = this;
+            var _this11 = this;
 
             this.hideDeadlineForm();
             fetch('/get_deadlines/' + this.state.project_id).then(function (response) {
@@ -383,13 +498,13 @@ var Project = function (_React$Component4) {
                     }]);
                 }
 
-                _this9.setState({ project_deadlines: deadlines_list });
+                _this11.setState({ project_deadlines: deadlines_list });
             });
         }
     }, {
         key: 'updateTasks',
         value: function updateTasks(deadline_id) {
-            var _this10 = this;
+            var _this12 = this;
 
             // if the current state section id is greater than 0, get the 
             // tasks that go with that deadline id, otherwise do nothing
@@ -411,7 +526,7 @@ var Project = function (_React$Component4) {
                     }]);
                 }
 
-                _this10.setState({ deadline_tasks: tasks_list });
+                _this12.setState({ deadline_tasks: tasks_list });
             });
         }
     }, {
@@ -476,8 +591,8 @@ var Project = function (_React$Component4) {
     return Project;
 }(React.Component);
 
-var ProjectTaskbar = function (_React$Component5) {
-    _inherits(ProjectTaskbar, _React$Component5);
+var ProjectTaskbar = function (_React$Component6) {
+    _inherits(ProjectTaskbar, _React$Component6);
 
     function ProjectTaskbar() {
         _classCallCheck(this, ProjectTaskbar);
@@ -508,8 +623,8 @@ var ProjectTaskbar = function (_React$Component5) {
     return ProjectTaskbar;
 }(React.Component);
 
-var ManageUsers = function (_React$Component6) {
-    _inherits(ManageUsers, _React$Component6);
+var ManageUsers = function (_React$Component7) {
+    _inherits(ManageUsers, _React$Component7);
 
     function ManageUsers() {
         _classCallCheck(this, ManageUsers);
@@ -559,18 +674,18 @@ var ManageUsers = function (_React$Component6) {
     return ManageUsers;
 }(React.Component);
 
-var TasksBoard = function (_React$Component7) {
-    _inherits(TasksBoard, _React$Component7);
+var TasksBoard = function (_React$Component8) {
+    _inherits(TasksBoard, _React$Component8);
 
     function TasksBoard(props) {
         _classCallCheck(this, TasksBoard);
 
-        var _this13 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
+        var _this15 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
 
-        _this13.state = {
+        _this15.state = {
             dragged_task: -1
         };
-        return _this13;
+        return _this15;
     }
 
     _createClass(TasksBoard, [{
@@ -612,13 +727,13 @@ var TasksBoard = function (_React$Component7) {
     }, {
         key: 'renderTask',
         value: function renderTask(task_json) {
-            var _this14 = this;
+            var _this16 = this;
 
             var task_id = "task" + task_json.id;
             return React.createElement(
                 'div',
                 { id: task_id, className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: function onDragStart(event) {
-                        return _this14.drag(event, task_json.id);
+                        return _this16.drag(event, task_json.id);
                     } },
                 task_json.title
             );
@@ -626,7 +741,7 @@ var TasksBoard = function (_React$Component7) {
     }, {
         key: 'render',
         value: function render() {
-            var _this15 = this;
+            var _this17 = this;
 
             // Update return to give custom headline
             var todo_tasks = [];
@@ -659,7 +774,7 @@ var TasksBoard = function (_React$Component7) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'todo-col', onDrop: function onDrop(event) {
-                                return _this15.drop(event, "To Do");
+                                return _this17.drop(event, "To Do");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -671,7 +786,7 @@ var TasksBoard = function (_React$Component7) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'progress-col', onDrop: function onDrop(event) {
-                                return _this15.drop(event, "In Progress");
+                                return _this17.drop(event, "In Progress");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -683,7 +798,7 @@ var TasksBoard = function (_React$Component7) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'done-col', onDrop: function onDrop(event) {
-                                return _this15.drop(event, "Done");
+                                return _this17.drop(event, "Done");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
