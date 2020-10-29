@@ -46,7 +46,7 @@ function create_project_link_element(project_name, project_id) {
     let project_link = document.createElement('a');
 
     project_link.setAttribute("class", "dropdown-item project-link");
-    project_link.setAttribute("href", "project/" + project_id);
+    project_link.setAttribute("href", "/project/" + project_id);
     project_link.innerHTML = project_name;
 
     // This will need to be modified to link to the project page
