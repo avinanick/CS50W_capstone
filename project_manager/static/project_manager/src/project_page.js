@@ -332,6 +332,13 @@ class Project extends React.Component {
         }
     }
 
+    hideMembershipForm() {
+        let hide_form = document.querySelector("#memberships-form");
+        if(hide_form) {
+            hide_form.style.display = "none";
+        }
+    }
+
     hideTaskForm() {
         let hide_form = document.querySelector('#task-form');
         if(hide_form) {
@@ -342,6 +349,10 @@ class Project extends React.Component {
 
     openDeadlineForm() {
         document.querySelector("#deadline-form").style.display = "block";
+    }
+
+    openMembershipForm() {
+        document.querySelector("#memberships-form").style.display = "block";
     }
 
     openTaskForm() {
@@ -443,6 +454,15 @@ class Project extends React.Component {
                 task_click={this.selectTask}
                 />);
         }
+
+        // Need to double check if this is the actual authority level name
+        if(this.state.authority_level != "member") {
+            main_body.push(<ManageUsers 
+                authority_level={this.state.authority_level}
+                close_form={this.hideMembershipForm}
+                />);
+        }
+
         return (
             <div>
                 {main_body}
@@ -471,6 +491,8 @@ class Project extends React.Component {
                 <ProjectTaskbar 
                 deadline_click={this.openDeadlineForm}
                 task_click={this.openTaskForm}
+                authority_level={this.state.authority_level}
+                member_click={this.openMembershipForm}
                 />
             </div>
         );
@@ -479,9 +501,18 @@ class Project extends React.Component {
 
 class ProjectTaskbar extends React.Component {
     render() {
+        let member_button = [];
+        if(this.props.authority_level != "member") {
+            member_button.push(<button 
+                className="btn btn-light" 
+                onClick={this.props.member_click}>
+                    Create Deadline
+                </button>);
+        }
         return(
             <div className='bottom-taskbar'>
                 <button className="btn btn-light" onClick={this.props.deadline_click}>Create Deadline</button>
+                {member_button}
                 <button className="btn btn-light" onClick={this.props.task_click}>Create Task</button>
             </div>
         );

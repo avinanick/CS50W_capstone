@@ -479,6 +479,14 @@ var Project = function (_React$Component5) {
             }
         }
     }, {
+        key: 'hideMembershipForm',
+        value: function hideMembershipForm() {
+            var hide_form = document.querySelector("#memberships-form");
+            if (hide_form) {
+                hide_form.style.display = "none";
+            }
+        }
+    }, {
         key: 'hideTaskForm',
         value: function hideTaskForm() {
             var hide_form = document.querySelector('#task-form');
@@ -491,6 +499,11 @@ var Project = function (_React$Component5) {
         key: 'openDeadlineForm',
         value: function openDeadlineForm() {
             document.querySelector("#deadline-form").style.display = "block";
+        }
+    }, {
+        key: 'openMembershipForm',
+        value: function openMembershipForm() {
+            document.querySelector("#memberships-form").style.display = "block";
         }
     }, {
         key: 'openTaskForm',
@@ -597,6 +610,15 @@ var Project = function (_React$Component5) {
                     task_click: this.selectTask
                 }));
             }
+
+            // Need to double check if this is the actual authority level name
+            if (this.state.authority_level != "member") {
+                main_body.push(React.createElement(ManageUsers, {
+                    authority_level: this.state.authority_level,
+                    close_form: this.hideMembershipForm
+                }));
+            }
+
             return React.createElement(
                 'div',
                 null,
@@ -621,7 +643,9 @@ var Project = function (_React$Component5) {
                 }),
                 React.createElement(ProjectTaskbar, {
                     deadline_click: this.openDeadlineForm,
-                    task_click: this.openTaskForm
+                    task_click: this.openTaskForm,
+                    authority_level: this.state.authority_level,
+                    member_click: this.openMembershipForm
                 })
             );
         }
@@ -642,6 +666,16 @@ var ProjectTaskbar = function (_React$Component6) {
     _createClass(ProjectTaskbar, [{
         key: 'render',
         value: function render() {
+            var member_button = [];
+            if (this.props.authority_level != "member") {
+                member_button.push(React.createElement(
+                    'button',
+                    {
+                        className: 'btn btn-light',
+                        onClick: this.props.member_click },
+                    'Create Deadline'
+                ));
+            }
             return React.createElement(
                 'div',
                 { className: 'bottom-taskbar' },
@@ -650,6 +684,7 @@ var ProjectTaskbar = function (_React$Component6) {
                     { className: 'btn btn-light', onClick: this.props.deadline_click },
                     'Create Deadline'
                 ),
+                member_button,
                 React.createElement(
                     'button',
                     { className: 'btn btn-light', onClick: this.props.task_click },
