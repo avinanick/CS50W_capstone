@@ -122,6 +122,19 @@ def logout_view(request):
     return redirect("login")
 
 @login_required
+def members(request, project):
+    requested_project = Project.objects.get(id=project_id)
+    member_check = Membership.objects.filter(member=request.user, project=requested_project)
+    if not member_check:
+        return JsonResponse({"error": "User not authorized for project,"}, status=400)
+    
+    all_members = Membership.objects.filter(project=requested_project)
+    return JsonResponse({"members": [{
+        "name": member.member.username, 
+        "authority": member.auth_level.level} 
+        for member in all_members]})
+
+@login_required
 def project(request, project_id):
     project_accessed = Project.objects.filter(id=project_id)
     if project_accessed.count() < 1:
