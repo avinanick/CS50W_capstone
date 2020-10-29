@@ -742,6 +742,54 @@ var ManageUsers = function (_React$Component7) {
             });
         }
     }, {
+        key: 'renderManagersSelect',
+        value: function renderManagersSelect() {
+            return React.createElement('div', null);
+        }
+    }, {
+        key: 'renderMembersSelect',
+        value: function renderMembersSelect() {
+            var memberslist = [];
+
+            for (var i = 0; i < this.state.members; i++) {
+                memberslist.push(this.renderOption(username));
+            }
+
+            var promote_button = [];
+            if (this.props.authority_level === "Owner") {
+                promote_button.push(React.createElement(
+                    'button',
+                    { type: 'button' },
+                    'Promote'
+                ));
+            }
+
+            return React.createElement(
+                'div',
+                null,
+                React.createElement(
+                    'select',
+                    { name: 'members', id: 'members-select', multiple: true },
+                    memberslist
+                ),
+                promote_button,
+                React.createElement(
+                    'button',
+                    { type: 'button' },
+                    'Remove'
+                )
+            );
+        }
+    }, {
+        key: 'renderOption',
+        value: function renderOption(username) {
+            return React.createElement(
+                'option',
+                { value: username },
+                username
+            );
+        }
+    }, {
         key: 'render',
         value: function render() {
 

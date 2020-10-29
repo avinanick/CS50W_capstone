@@ -555,6 +555,41 @@ class ManageUsers extends React.Component {
         })
     }
 
+    renderManagersSelect() {
+        return (
+            <div></div>
+        );
+    }
+
+    renderMembersSelect() {
+        let memberslist = [];
+
+        for(let i=0; i<this.state.members; i++) {
+            memberslist.push(this.renderOption(username));
+        }
+
+        let promote_button = [];
+        if(this.props.authority_level === "Owner") {
+            promote_button.push(<button type="button">Promote</button>);
+        }
+
+        return (
+            <div>
+                <select name="members" id="members-select" multiple>
+                    {memberslist}
+                </select>
+                {promote_button}
+                <button type="button">Remove</button>
+            </div>
+        );
+    }
+
+    renderOption(username) {
+        return (
+            <option value={username}>{username}</option>
+        )
+    }
+
     render() {
 
         let aut_level_items = [];
