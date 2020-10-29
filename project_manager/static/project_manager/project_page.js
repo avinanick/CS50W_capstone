@@ -700,15 +700,26 @@ var ProjectTaskbar = function (_React$Component6) {
 var ManageUsers = function (_React$Component7) {
     _inherits(ManageUsers, _React$Component7);
 
-    function ManageUsers() {
+    function ManageUsers(props) {
         _classCallCheck(this, ManageUsers);
 
-        return _possibleConstructorReturn(this, (ManageUsers.__proto__ || Object.getPrototypeOf(ManageUsers)).apply(this, arguments));
+        var _this15 = _possibleConstructorReturn(this, (ManageUsers.__proto__ || Object.getPrototypeOf(ManageUsers)).call(this, props));
+
+        _this15.state = {
+            managers: [],
+            members: []
+        };
+        return _this15;
     }
 
     _createClass(ManageUsers, [{
+        key: 'updateUsers',
+        value: function updateUsers() {}
+    }, {
         key: 'render',
         value: function render() {
+
+            var aut_level_items = [];
 
             if (this.props.authority_level === "Owner") {}
 

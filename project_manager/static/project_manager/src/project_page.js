@@ -520,7 +520,22 @@ class ProjectTaskbar extends React.Component {
 }
 
 class ManageUsers extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            managers: [],
+            members: []
+        }
+    }
+
+    updateUsers() {
+        
+    }
+
     render() {
+
+        let aut_level_items = [];
 
         if(this.props.authority_level === "Owner") {
 
