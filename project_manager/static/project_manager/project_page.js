@@ -711,14 +711,36 @@ var ManageUsers = function (_React$Component7) {
             members: []
         };
 
+        _this15.editUsers = _this15.editUsers.bind(_this15);
+        _this15.updateUsers = _this15.updateUsers.bind(_this15);
         _this15.updateUsers();
         return _this15;
     }
 
     _createClass(ManageUsers, [{
+        key: 'editUsers',
+        value: function editUsers(username, edit_type) {
+            var _this16 = this;
+
+            var csrftoken = getCookie('csrftoken');
+
+            fetch('/members/' + this.props.project_id, {
+                headers: { 'X-CSRFToken': csrftoken },
+                method: 'POST',
+                body: JSON.stringify({
+                    //content: post_content
+                    username: username,
+                    member_edit: edit_type
+                })
+            }).then(function (response) {
+                console.log(response);
+                _this16.updateUsers();
+            });
+        }
+    }, {
         key: 'updateUsers',
         value: function updateUsers() {
-            var _this16 = this;
+            var _this17 = this;
 
             fetch("/members/" + this.props.project_id).then(function (response) {
                 return response.json();
@@ -737,8 +759,8 @@ var ManageUsers = function (_React$Component7) {
                     }
                 }
 
-                _this16.setState({ managers: update_managers });
-                _this16.setState({ members: update_members });
+                _this17.setState({ managers: update_managers });
+                _this17.setState({ members: update_members });
             });
         }
     }, {
@@ -770,12 +792,12 @@ var ManageUsers = function (_React$Component7) {
                 ),
                 React.createElement(
                     'button',
-                    { type: 'button' },
+                    { type: 'button', 'class': 'btn btn-primary' },
                     'Demote'
                 ),
                 React.createElement(
                     'button',
-                    { type: 'button' },
+                    { type: 'button', 'class': 'btn btn-primary' },
                     'Remove'
                 )
             );
@@ -793,7 +815,7 @@ var ManageUsers = function (_React$Component7) {
             if (this.props.authority_level === "Owner") {
                 promote_button.push(React.createElement(
                     'button',
-                    { type: 'button' },
+                    { type: 'button', 'class': 'btn btn-primary' },
                     'Promote'
                 ));
             }
@@ -814,7 +836,7 @@ var ManageUsers = function (_React$Component7) {
                 promote_button,
                 React.createElement(
                     'button',
-                    { type: 'button' },
+                    { type: 'button', 'class': 'btn btn-primary' },
                     'Remove'
                 )
             );
@@ -862,6 +884,8 @@ var ManageUsers = function (_React$Component7) {
                             'Invite'
                         )
                     ),
+                    this.renderManagersSelect(),
+                    this.renderMembersSelect(),
                     React.createElement(
                         'button',
                         { type: 'button', className: 'btn btn-primary', onClick: this.props.close_form },
@@ -881,12 +905,12 @@ var TasksBoard = function (_React$Component8) {
     function TasksBoard(props) {
         _classCallCheck(this, TasksBoard);
 
-        var _this17 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
+        var _this18 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
 
-        _this17.state = {
+        _this18.state = {
             dragged_task: -1
         };
-        return _this17;
+        return _this18;
     }
 
     _createClass(TasksBoard, [{
@@ -928,15 +952,15 @@ var TasksBoard = function (_React$Component8) {
     }, {
         key: 'renderTask',
         value: function renderTask(task_json) {
-            var _this18 = this;
+            var _this19 = this;
 
             var task_id = "task" + task_json.id;
             return React.createElement(
                 'div',
                 { id: task_id, onClick: function onClick() {
-                        return _this18.props.task_click(task_json);
+                        return _this19.props.task_click(task_json);
                     }, className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: function onDragStart(event) {
-                        return _this18.drag(event, task_json.id);
+                        return _this19.drag(event, task_json.id);
                     } },
                 task_json.title
             );
@@ -944,7 +968,7 @@ var TasksBoard = function (_React$Component8) {
     }, {
         key: 'render',
         value: function render() {
-            var _this19 = this;
+            var _this20 = this;
 
             // Update return to give custom headline
             var todo_tasks = [];
@@ -977,7 +1001,7 @@ var TasksBoard = function (_React$Component8) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'todo-col', onDrop: function onDrop(event) {
-                                return _this19.drop(event, "To Do");
+                                return _this20.drop(event, "To Do");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -989,7 +1013,7 @@ var TasksBoard = function (_React$Component8) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'progress-col', onDrop: function onDrop(event) {
-                                return _this19.drop(event, "In Progress");
+                                return _this20.drop(event, "In Progress");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -1001,7 +1025,7 @@ var TasksBoard = function (_React$Component8) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'done-col', onDrop: function onDrop(event) {
-                                return _this19.drop(event, "Done");
+                                return _this20.drop(event, "Done");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',

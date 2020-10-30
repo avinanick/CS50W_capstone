@@ -529,7 +529,29 @@ class ManageUsers extends React.Component {
             members: []
         }
 
+        this.editUsers = this.editUsers.bind(this);
+        this.updateUsers = this.updateUsers.bind(this);
         this.updateUsers();
+    }
+
+    editUsers(username, edit_type) {
+
+        const csrftoken = getCookie('csrftoken');
+
+        fetch('/members/' + this.props.project_id, {
+        headers: {'X-CSRFToken': csrftoken},
+        method: 'POST',
+        body: JSON.stringify({
+            //content: post_content
+            username: username,
+            member_edit: edit_type
+            })
+        })
+        .then(response => {
+            console.log(response);
+            this.updateUsers();
+        })
+        
     }
 
     updateUsers() {
@@ -573,8 +595,8 @@ class ManageUsers extends React.Component {
                 <select name="members" id="members-select" multiple>
                     {managerslist}
                 </select>
-                <button type="button">Demote</button>
-                <button type="button">Remove</button>
+                <button type="button" class="btn btn-primary">Demote</button>
+                <button type="button" class="btn btn-primary">Remove</button>
             </div>
         );
     }
@@ -588,7 +610,7 @@ class ManageUsers extends React.Component {
 
         let promote_button = [];
         if(this.props.authority_level === "Owner") {
-            promote_button.push(<button type="button">Promote</button>);
+            promote_button.push(<button type="button" class="btn btn-primary">Promote</button>);
         }
 
         return (
@@ -598,7 +620,7 @@ class ManageUsers extends React.Component {
                     {memberslist}
                 </select>
                 {promote_button}
-                <button type="button">Remove</button>
+                <button type="button" class="btn btn-primary">Remove</button>
             </div>
         );
     }
@@ -626,6 +648,8 @@ class ManageUsers extends React.Component {
                         <input id="member-invite" className="" type="text" placeholder="Member name" />
                         <button type="button" className="btn btn-primary">Invite</button>
                     </div>
+                    {this.renderManagersSelect()}
+                    {this.renderMembersSelect()}
                     <button type="button" className="btn btn-primary" onClick={this.props.close_form}>Close</button>
                 </form>
             </div>
