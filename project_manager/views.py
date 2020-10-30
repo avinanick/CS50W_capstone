@@ -149,6 +149,22 @@ def members(request, project_id):
             target_membership.delete()
             return JsonResponse({"message": "Member removed from project"}, status=201)
 
+        if data["member_edit"] == "promote":
+            if member_check.auth_level.level != "Owner":
+                return JsonResponse({"error": "No authority for action"}, status=400)
+            target_membership = Membership.objects.get(project=Project.objects.get(id=project_id), member=User.objects.get(username=data["username"]))
+            target_membership.auth_level = Authority.objects.get(level="Manager")
+            target_membership.save()
+            return JsonResponse({"message": "Member promoted to manager"}, status=201)
+
+        if data["member_edit"] == "demote":
+            if member_check.auth_level.level != "Owner":
+                return JsonResponse({"error": "No authority for action"}, status=400)
+            target_membership = Membership.objects.get(project=Project.objects.get(id=project_id), member=User.objects.get(username=data["username"]))
+            target_membership.auth_level = Authority.objects.get(level="Member")
+            target_membership.save()
+            return JsonResponse({"message": "Member demoted to member"}, status=201)
+
     all_members = Membership.objects.filter(project=requested_project)
     return JsonResponse({"members": [{
         "name": member.member.username, 
