@@ -15,7 +15,7 @@ def index(request):
 
 @login_required
 def authority(request, project_id):
-    if not Membership.objects.get(project=Project.objects.get(id=project_id), member=request.user).exists():
+    if not Membership.objects.filter(project=Project.objects.get(id=project_id), member=request.user).exists():
         return JsonResponse({"auth_level": "none"})
     member_set = Membership.objects.get(project=Project.objects.get(id=project_id), member=request.user)
     return JsonResponse({"auth_level": member_set.auth_level.level})
@@ -122,12 +122,26 @@ def logout_view(request):
     return redirect("login")
 
 @login_required
-def members(request, project):
+def members(request, project_id):
     requested_project = Project.objects.get(id=project_id)
     member_check = Membership.objects.filter(member=request.user, project=requested_project)
     if not member_check:
         return JsonResponse({"error": "User not authorized for project,"}, status=400)
-    
+
+    if request.method == "POST":
+        # Used for inviting or removing members
+        if member_check.auth_level.level == "Member":
+            return JsonResponse({"error": "No authority for action"}, status=400)
+        data = json.loads(request.body)
+        if data["member_edit"] == "invite":
+            if User.objects.filter(username=data["username"]).exists() and not Membership.objects.filter(project=requested_project, member=User.objects.get(username=data["username"])).exists():
+                new_membership = Membership(
+                    project=requested_project,
+                    member=User.objects.get(username=data["username"]),
+                    auth_level=Authority.objects.get(level="Member"))
+                new_membership.save()
+                return JsonResponse({"message": "Member added to project"}, status=201)
+            
     all_members = Membership.objects.filter(project=requested_project)
     return JsonResponse({"members": [{
         "name": member.member.username, 
