@@ -708,11 +708,17 @@ var ManageUsers = function (_React$Component7) {
 
         _this15.state = {
             managers: [],
-            members: []
+            members: [],
+            entered_username: "",
+            selected_member: "",
+            selected_manager: ""
         };
 
         _this15.editUsers = _this15.editUsers.bind(_this15);
         _this15.updateUsers = _this15.updateUsers.bind(_this15);
+        _this15.onManagerChange = _this15.onManagerChange.bind(_this15);
+        _this15.onMemberChange = _this15.onMemberChange.bind(_this15);
+        _this15.onUsernameChange = _this15.onUsernameChange.bind(_this15);
         _this15.updateUsers();
         return _this15;
     }
@@ -736,6 +742,21 @@ var ManageUsers = function (_React$Component7) {
                 console.log(response);
                 _this16.updateUsers();
             });
+        }
+    }, {
+        key: 'onManagerChange',
+        value: function onManagerChange(event) {
+            this.setState({ selected_manager: event.target.value });
+        }
+    }, {
+        key: 'onMemberChange',
+        value: function onMemberChange(event) {
+            this.setState({ selected_member: event.target.value });
+        }
+    }, {
+        key: 'onUsernameChange',
+        value: function onUsernameChange(event) {
+            this.setState({ entered_username: event.target.value });
         }
     }, {
         key: 'updateUsers',
@@ -766,6 +787,8 @@ var ManageUsers = function (_React$Component7) {
     }, {
         key: 'renderManagersSelect',
         value: function renderManagersSelect() {
+            var _this18 = this;
+
             // If the user isn't the owner, they shouldn't be able
             // to modify any managers
             if (this.props.authority_level != "Owner") {
@@ -787,17 +810,21 @@ var ManageUsers = function (_React$Component7) {
                 ),
                 React.createElement(
                     'select',
-                    { name: 'members', id: 'members-select', multiple: true },
+                    { name: 'members', id: 'members-select', onChange: this.onManagerChange, value: this.state.selected_manager },
                     managerslist
                 ),
                 React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary' },
+                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                            return _this18.editUsers(_this18.state.selected_manager, "demote");
+                        } },
                     'Demote'
                 ),
                 React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary' },
+                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                            return _this18.editUsers(_this18.state.selected_manager, "remove");
+                        } },
                     'Remove'
                 )
             );
@@ -805,6 +832,8 @@ var ManageUsers = function (_React$Component7) {
     }, {
         key: 'renderMembersSelect',
         value: function renderMembersSelect() {
+            var _this19 = this;
+
             var memberslist = [];
 
             for (var i = 0; i < this.state.members; i++) {
@@ -815,7 +844,9 @@ var ManageUsers = function (_React$Component7) {
             if (this.props.authority_level === "Owner") {
                 promote_button.push(React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary' },
+                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                            return _this19.editUsers(_this19.state.selected_member, "promote");
+                        } },
                     'Promote'
                 ));
             }
@@ -830,13 +861,15 @@ var ManageUsers = function (_React$Component7) {
                 ),
                 React.createElement(
                     'select',
-                    { name: 'members', id: 'members-select', multiple: true },
+                    { name: 'members', id: 'members-select', nChange: this.onMemberChange, value: this.state.selected_member },
                     memberslist
                 ),
                 promote_button,
                 React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary' },
+                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                            return _this19.editUsers(_this19.state.selected_member, "remove");
+                        } },
                     'Remove'
                 )
             );
@@ -853,6 +886,7 @@ var ManageUsers = function (_React$Component7) {
     }, {
         key: 'render',
         value: function render() {
+            var _this20 = this;
 
             var aut_level_items = [];
 
@@ -877,10 +911,12 @@ var ManageUsers = function (_React$Component7) {
                             { 'for': 'member-invite', className: '' },
                             'Invite Member'
                         ),
-                        React.createElement('input', { id: 'member-invite', className: '', type: 'text', placeholder: 'Member name' }),
+                        React.createElement('input', { id: 'member-invite', className: '', type: 'text', placeholder: 'Member name', value: this.state.entered_username, onChange: this.onUsernameChange }),
                         React.createElement(
                             'button',
-                            { type: 'button', className: 'btn btn-primary' },
+                            { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
+                                    return _this20.updateUsers(_this20.state.entered_username, "invite");
+                                } },
                             'Invite'
                         )
                     ),
@@ -905,12 +941,12 @@ var TasksBoard = function (_React$Component8) {
     function TasksBoard(props) {
         _classCallCheck(this, TasksBoard);
 
-        var _this18 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
+        var _this21 = _possibleConstructorReturn(this, (TasksBoard.__proto__ || Object.getPrototypeOf(TasksBoard)).call(this, props));
 
-        _this18.state = {
+        _this21.state = {
             dragged_task: -1
         };
-        return _this18;
+        return _this21;
     }
 
     _createClass(TasksBoard, [{
@@ -952,15 +988,15 @@ var TasksBoard = function (_React$Component8) {
     }, {
         key: 'renderTask',
         value: function renderTask(task_json) {
-            var _this19 = this;
+            var _this22 = this;
 
             var task_id = "task" + task_json.id;
             return React.createElement(
                 'div',
                 { id: task_id, onClick: function onClick() {
-                        return _this19.props.task_click(task_json);
+                        return _this22.props.task_click(task_json);
                     }, className: 'task-display', draggable: 'true', key: task_json.id, onDragStart: function onDragStart(event) {
-                        return _this19.drag(event, task_json.id);
+                        return _this22.drag(event, task_json.id);
                     } },
                 task_json.title
             );
@@ -968,7 +1004,7 @@ var TasksBoard = function (_React$Component8) {
     }, {
         key: 'render',
         value: function render() {
-            var _this20 = this;
+            var _this23 = this;
 
             // Update return to give custom headline
             var todo_tasks = [];
@@ -1001,7 +1037,7 @@ var TasksBoard = function (_React$Component8) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'todo-col', onDrop: function onDrop(event) {
-                                return _this20.drop(event, "To Do");
+                                return _this23.drop(event, "To Do");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -1013,7 +1049,7 @@ var TasksBoard = function (_React$Component8) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'progress-col', onDrop: function onDrop(event) {
-                                return _this20.drop(event, "In Progress");
+                                return _this23.drop(event, "In Progress");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',
@@ -1025,7 +1061,7 @@ var TasksBoard = function (_React$Component8) {
                     React.createElement(
                         'div',
                         { className: 'task-col', id: 'done-col', onDrop: function onDrop(event) {
-                                return _this20.drop(event, "Done");
+                                return _this23.drop(event, "Done");
                             }, onDragOver: this.allowDrop },
                         React.createElement(
                             'h3',

@@ -526,11 +526,17 @@ class ManageUsers extends React.Component {
 
         this.state = {
             managers: [],
-            members: []
+            members: [],
+            entered_username: "",
+            selected_member: "",
+            selected_manager: ""
         }
 
         this.editUsers = this.editUsers.bind(this);
         this.updateUsers = this.updateUsers.bind(this);
+        this.onManagerChange = this.onManagerChange.bind(this);
+        this.onMemberChange = this.onMemberChange.bind(this);
+        this.onUsernameChange = this.onUsernameChange.bind(this);
         this.updateUsers();
     }
 
@@ -552,6 +558,18 @@ class ManageUsers extends React.Component {
             this.updateUsers();
         })
         
+    }
+
+    onManagerChange(event) {
+        this.setState({selected_manager: event.target.value});
+    }
+
+    onMemberChange(event) {
+        this.setState({selected_member: event.target.value});
+    }
+
+    onUsernameChange(event) {
+        this.setState({entered_username: event.target.value});
     }
 
     updateUsers() {
@@ -592,11 +610,11 @@ class ManageUsers extends React.Component {
         return (
             <div>
                 <label for="members-select">Members</label>
-                <select name="members" id="members-select" multiple>
+                <select name="members" id="members-select" onChange={this.onManagerChange} value={this.state.selected_manager}>
                     {managerslist}
                 </select>
-                <button type="button" class="btn btn-primary">Demote</button>
-                <button type="button" class="btn btn-primary">Remove</button>
+                <button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_manager, "demote")}>Demote</button>
+                <button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_manager, "remove")}>Remove</button>
             </div>
         );
     }
@@ -610,17 +628,17 @@ class ManageUsers extends React.Component {
 
         let promote_button = [];
         if(this.props.authority_level === "Owner") {
-            promote_button.push(<button type="button" class="btn btn-primary">Promote</button>);
+            promote_button.push(<button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_member, "promote")}>Promote</button>);
         }
 
         return (
             <div>
                 <label for="members-select">Members</label>
-                <select name="members" id="members-select" multiple>
+                <select name="members" id="members-select" nChange={this.onMemberChange} value={this.state.selected_member}>
                     {memberslist}
                 </select>
                 {promote_button}
-                <button type="button" class="btn btn-primary">Remove</button>
+                <button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_member, "remove")}>Remove</button>
             </div>
         );
     }
@@ -645,8 +663,8 @@ class ManageUsers extends React.Component {
                     <h3>Manage Users</h3>
                     <div className="">
                         <label for="member-invite" className="">Invite Member</label>
-                        <input id="member-invite" className="" type="text" placeholder="Member name" />
-                        <button type="button" className="btn btn-primary">Invite</button>
+                        <input id="member-invite" className="" type="text" placeholder="Member name" value={this.state.entered_username} onChange={this.onUsernameChange}/>
+                        <button type="button" className="btn btn-primary" onClick={() => this.updateUsers(this.state.entered_username, "invite")}>Invite</button>
                     </div>
                     {this.renderManagersSelect()}
                     {this.renderMembersSelect()}
