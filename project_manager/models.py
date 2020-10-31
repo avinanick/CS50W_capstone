@@ -37,3 +37,8 @@ class Membership(models.Model):
 
 class Workflow(models.Model):
     name = models.CharField(max_length=15)
+
+class ActivityMessage(models.Model):
+    message = models.CharField(max_length=1024)
+    date_created = models.DateTimeField(auto_now_add=True)
+    users = models.ManyToManyField(User, related_name="messages")
