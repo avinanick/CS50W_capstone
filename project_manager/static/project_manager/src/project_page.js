@@ -592,6 +592,12 @@ class ManageUsers extends React.Component {
 
             this.setState({managers: update_managers});
             this.setState({members: update_members});
+            if(update_members.length > 0) {
+                this.setState({selected_member: update_members[0]});
+            }
+            if(update_managers.length > 0) {
+                this.setState({selected_manager: update_managers[0]});
+            }
         })
     }
 
@@ -603,18 +609,18 @@ class ManageUsers extends React.Component {
         }
         let managerslist = [];
 
-        for(let i=0; i<this.state.managers; i++) {
+        for(let i=0; i<this.state.managers.length; i++) {
             managerslist.push(this.renderOption(this.state.managers[i]));
         }
 
         return (
             <div>
-                <label for="members-select">Members</label>
-                <select name="members" id="members-select" onChange={this.onManagerChange} value={this.state.selected_manager}>
+                <label htmlFor="managers-select">Managers</label>
+                <select name="managers" id="managers-select" onChange={this.onManagerChange} value={this.state.selected_manager}>
                     {managerslist}
                 </select>
-                <button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_manager, "demote")}>Demote</button>
-                <button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_manager, "remove")}>Remove</button>
+                <button type="button" className="btn btn-primary" onClick={() => this.editUsers(this.state.selected_manager, "demote")}>Demote</button>
+                <button type="button" className="btn btn-primary" onClick={() => this.editUsers(this.state.selected_manager, "remove")}>Remove</button>
             </div>
         );
     }
@@ -622,23 +628,23 @@ class ManageUsers extends React.Component {
     renderMembersSelect() {
         let memberslist = [];
 
-        for(let i=0; i<this.state.members; i++) {
+        for(let i=0; i<this.state.members.length; i++) {
             memberslist.push(this.renderOption(this.state.members[i]));
         }
 
         let promote_button = [];
         if(this.props.authority_level === "Owner") {
-            promote_button.push(<button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_member, "promote")}>Promote</button>);
+            promote_button.push(<button type="button" className="btn btn-primary" onClick={() => this.editUsers(this.state.selected_member, "promote")}>Promote</button>);
         }
 
         return (
             <div>
-                <label for="members-select">Members</label>
-                <select name="members" id="members-select" nChange={this.onMemberChange} value={this.state.selected_member}>
+                <label htmlFor="members-select">Members</label>
+                <select name="members" id="members-select" onChange={this.onMemberChange} value={this.state.selected_member}>
                     {memberslist}
                 </select>
                 {promote_button}
-                <button type="button" class="btn btn-primary" onClick={() => this.editUsers(this.state.selected_member, "remove")}>Remove</button>
+                <button type="button" className="btn btn-primary" onClick={() => this.editUsers(this.state.selected_member, "remove")}>Remove</button>
             </div>
         );
     }
@@ -651,20 +657,14 @@ class ManageUsers extends React.Component {
 
     render() {
 
-        let aut_level_items = [];
-
-        if(this.props.authority_level === "Owner") {
-
-        }
-
         return(
             <div className="overlay-form" id="memberships-form">
                 <form>
                     <h3>Manage Users</h3>
                     <div className="">
-                        <label for="member-invite" className="">Invite Member</label>
+                        <label htmlFor="member-invite" className="">Invite Member</label>
                         <input id="member-invite" className="" type="text" placeholder="Member name" value={this.state.entered_username} onChange={this.onUsernameChange}/>
-                        <button type="button" className="btn btn-primary" onClick={() => this.updateUsers(this.state.entered_username, "invite")}>Invite</button>
+                        <button type="button" className="btn btn-primary" onClick={() => this.editUsers(this.state.entered_username, "invite")}>Invite</button>
                     </div>
                     {this.renderManagersSelect()}
                     {this.renderMembersSelect()}

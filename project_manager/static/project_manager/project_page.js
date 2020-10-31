@@ -782,6 +782,12 @@ var ManageUsers = function (_React$Component7) {
 
                 _this17.setState({ managers: update_managers });
                 _this17.setState({ members: update_members });
+                if (update_members.length > 0) {
+                    _this17.setState({ selected_member: update_members[0] });
+                }
+                if (update_managers.length > 0) {
+                    _this17.setState({ selected_manager: update_managers[0] });
+                }
             });
         }
     }, {
@@ -796,7 +802,7 @@ var ManageUsers = function (_React$Component7) {
             }
             var managerslist = [];
 
-            for (var i = 0; i < this.state.managers; i++) {
+            for (var i = 0; i < this.state.managers.length; i++) {
                 managerslist.push(this.renderOption(this.state.managers[i]));
             }
 
@@ -805,24 +811,24 @@ var ManageUsers = function (_React$Component7) {
                 null,
                 React.createElement(
                     'label',
-                    { 'for': 'members-select' },
-                    'Members'
+                    { htmlFor: 'managers-select' },
+                    'Managers'
                 ),
                 React.createElement(
                     'select',
-                    { name: 'members', id: 'members-select', onChange: this.onManagerChange, value: this.state.selected_manager },
+                    { name: 'managers', id: 'managers-select', onChange: this.onManagerChange, value: this.state.selected_manager },
                     managerslist
                 ),
                 React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                    { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
                             return _this18.editUsers(_this18.state.selected_manager, "demote");
                         } },
                     'Demote'
                 ),
                 React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                    { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
                             return _this18.editUsers(_this18.state.selected_manager, "remove");
                         } },
                     'Remove'
@@ -836,7 +842,7 @@ var ManageUsers = function (_React$Component7) {
 
             var memberslist = [];
 
-            for (var i = 0; i < this.state.members; i++) {
+            for (var i = 0; i < this.state.members.length; i++) {
                 memberslist.push(this.renderOption(this.state.members[i]));
             }
 
@@ -844,7 +850,7 @@ var ManageUsers = function (_React$Component7) {
             if (this.props.authority_level === "Owner") {
                 promote_button.push(React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                    { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
                             return _this19.editUsers(_this19.state.selected_member, "promote");
                         } },
                     'Promote'
@@ -856,18 +862,18 @@ var ManageUsers = function (_React$Component7) {
                 null,
                 React.createElement(
                     'label',
-                    { 'for': 'members-select' },
+                    { htmlFor: 'members-select' },
                     'Members'
                 ),
                 React.createElement(
                     'select',
-                    { name: 'members', id: 'members-select', nChange: this.onMemberChange, value: this.state.selected_member },
+                    { name: 'members', id: 'members-select', onChange: this.onMemberChange, value: this.state.selected_member },
                     memberslist
                 ),
                 promote_button,
                 React.createElement(
                     'button',
-                    { type: 'button', 'class': 'btn btn-primary', onClick: function onClick() {
+                    { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
                             return _this19.editUsers(_this19.state.selected_member, "remove");
                         } },
                     'Remove'
@@ -888,10 +894,6 @@ var ManageUsers = function (_React$Component7) {
         value: function render() {
             var _this20 = this;
 
-            var aut_level_items = [];
-
-            if (this.props.authority_level === "Owner") {}
-
             return React.createElement(
                 'div',
                 { className: 'overlay-form', id: 'memberships-form' },
@@ -908,14 +910,14 @@ var ManageUsers = function (_React$Component7) {
                         { className: '' },
                         React.createElement(
                             'label',
-                            { 'for': 'member-invite', className: '' },
+                            { htmlFor: 'member-invite', className: '' },
                             'Invite Member'
                         ),
                         React.createElement('input', { id: 'member-invite', className: '', type: 'text', placeholder: 'Member name', value: this.state.entered_username, onChange: this.onUsernameChange }),
                         React.createElement(
                             'button',
                             { type: 'button', className: 'btn btn-primary', onClick: function onClick() {
-                                    return _this20.updateUsers(_this20.state.entered_username, "invite");
+                                    return _this20.editUsers(_this20.state.entered_username, "invite");
                                 } },
                             'Invite'
                         )
