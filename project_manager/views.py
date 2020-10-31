@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import json
 import datetime
 
-from .models import User, Project, Deadline, Task, Authority, Membership, Workflow
+from .models import User, Project, Deadline, Task, Authority, Membership, Workflow, ActivityMessage
 
 # Create your views here.
 @login_required
@@ -33,6 +33,13 @@ def create_deadline(request):
         due_date=submitted_date)
 
     new_deadline.save()
+    new_activity_message = ActivityMessage(
+        message=request.user.username + " created a new deadline in project: " + linked_project.name
+    )
+    project_users = Membership.objects.filter(project=linked_project)
+    for project_user in project_users:
+        new_activity_message.users.add(project_user)
+    new_activity_message.save()
     return JsonResponse({"message": "Deadline created."}, status=201)
 
 @login_required
@@ -58,6 +65,14 @@ def create_project(request):
         auth_level=Authority.objects.get(level="Owner")
     )
     new_membership.save()
+
+    new_activity_message = ActivityMessage(
+        message=request.user.username + " created project: " + new_project.name
+    )
+    project_users = Membership.objects.filter(project=new_project)
+    for project_user in project_users:
+        new_activity_message.users.add(project_user)
+    new_activity_message.save()
     return JsonResponse({"message": "Project created."}, status=201)
 
 @login_required
@@ -79,6 +94,14 @@ def create_task(request):
         new_task.deadline = Deadline.objects.get(id=data["deadline_id"])
 
     new_task.save()
+
+    new_activity_message = ActivityMessage(
+        message=request.user.username + " created a new task in project: " + linked_project.name
+    )
+    project_users = Membership.objects.filter(project=linked_project)
+    for project_user in project_users:
+        new_activity_message.users.add(project_user)
+    new_activity_message.save()
 
     return JsonResponse({"message": "Task created."}, status=201)
 
