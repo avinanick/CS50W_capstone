@@ -125,10 +125,12 @@ def logout_view(request):
 def members(request, project_id):
     requested_project = Project.objects.get(id=project_id)
     member_check = Membership.objects.filter(member=request.user, project=requested_project)
-    if not member_check:
+    if not member_check.exists():
         return JsonResponse({"error": "User not authorized for project,"}, status=400)
+    member_check = member_check[0]
 
     if request.method == "POST":
+        print("Processing member post requst")
         # Used for inviting or removing members
         if member_check.auth_level.level == "Member":
             return JsonResponse({"error": "No authority for action"}, status=400)
