@@ -39,9 +39,10 @@ def create_deadline(request):
     new_activity_message = ActivityMessage(
         message=request.user.username + " created a new deadline in project: " + linked_project.name
     )
+    new_activity_message.save()
     project_users = Membership.objects.filter(project=linked_project)
     for project_user in project_users:
-        new_activity_message.users.add(project_user)
+        new_activity_message.users.add(project_user.member)
     new_activity_message.save()
     return JsonResponse({"message": "Deadline created."}, status=201)
 
@@ -72,9 +73,10 @@ def create_project(request):
     new_activity_message = ActivityMessage(
         message=request.user.username + " created project: " + new_project.name
     )
+    new_activity_message.save()
     project_users = Membership.objects.filter(project=new_project)
     for project_user in project_users:
-        new_activity_message.users.add(project_user)
+        new_activity_message.users.add(project_user.member)
     new_activity_message.save()
     return JsonResponse({"message": "Project created."}, status=201)
 
@@ -101,9 +103,10 @@ def create_task(request):
     new_activity_message = ActivityMessage(
         message=request.user.username + " created a new task in project: " + linked_project.name
     )
+    new_activity_message.save()
     project_users = Membership.objects.filter(project=linked_project)
     for project_user in project_users:
-        new_activity_message.users.add(project_user)
+        new_activity_message.users.add(project_user.member)
     new_activity_message.save()
 
     return JsonResponse({"message": "Task created."}, status=201)
@@ -170,14 +173,15 @@ def members(request, project_id):
 
                 new_activity_message = ActivityMessage(
                     message= request.user.username + " added " + data["username"] + " to " + requested_project.name)
-                project_users = Membership.objects.filter(project=linked_project)
+                new_activity_message.save()
+                project_users = Membership.objects.filter(project=requested_project)
                 for project_user in project_users:
-                    new_activity_message.users.add(project_user)
+                    new_activity_message.users.add(project_user.member)
                 new_activity_message.save()
                 
                 return JsonResponse({"message": "Member added to project"}, status=201)
             else:
-                return JsonResponse({"error": "Member does not exist", status=400})
+                return JsonResponse({"error": "Member does not exist"}, status=400)
 
         target_user = User.objects.get(username=data["username"])
 
@@ -189,9 +193,10 @@ def members(request, project_id):
 
             new_activity_message = ActivityMessage(
                 message= request.user.username + " removed " + data["username"] + " from " + requested_project.name)
-            project_users = Membership.objects.filter(project=linked_project)
+            new_activity_message.save()
+            project_users = Membership.objects.filter(project=requestedproject)
             for project_user in project_users:
-                new_activity_message.users.add(project_user)
+                new_activity_message.users.add(project_user.member)
             new_activity_message.save()
             return JsonResponse({"message": "Member removed from project"}, status=201)
 
@@ -204,9 +209,10 @@ def members(request, project_id):
 
             new_activity_message = ActivityMessage(
                 message= request.user.username + " promoted " + data["username"] + " to manager in " + requested_project.name)
-            project_users = Membership.objects.filter(project=linked_project)
+            new_activity_message.save()
+            project_users = Membership.objects.filter(project=requested_project)
             for project_user in project_users:
-                new_activity_message.users.add(project_user)
+                new_activity_message.users.add(project_user.member)
             new_activity_message.save()
 
             return JsonResponse({"message": "Member promoted to manager"}, status=201)
@@ -220,9 +226,10 @@ def members(request, project_id):
 
             new_activity_message = ActivityMessage(
                 message= request.user.username + " demoted " + data["username"] + " to member in " + requested_project.name)
-            project_users = Membership.objects.filter(project=linked_project)
+            new_activity_message.save()
+            project_users = Membership.objects.filter(project=requested_project)
             for project_user in project_users:
-                new_activity_message.users.add(project_user)
+                new_activity_message.users.add(project_user.member)
             new_activity_message.save()
 
             return JsonResponse({"message": "Member demoted to member"}, status=201)
