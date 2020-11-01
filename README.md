@@ -22,7 +22,7 @@ Release Deadlines are set and edited by either the Project Owner, or any Group M
 
 ### Tasks
 
-Tasks are created by any member working on the project. They can optionally be assigned to a release deadline as well as a group member on the project. Additional fields include a title, description, and work status which starts as To Do and can be updated to In Progress and Done.
+Tasks are created by any member working on the project. Fields include a title, description, and work status which starts as To Do and can be updated to In Progress and Done.
 
 ## Contents
 
