@@ -11,7 +11,10 @@ from .models import User, Project, Deadline, Task, Authority, Membership, Workfl
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, "project_manager/index.html")
+    user_activity = ActivityMessage.objects.filter(users=request.user).order_by("-date_created")
+    return render(request, "project_manager/index.html", {
+        "messages": user_activity
+    })
 
 @login_required
 def authority(request, project_id):
