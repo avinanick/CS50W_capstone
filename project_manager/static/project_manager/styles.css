@@ -18,6 +18,12 @@
     width: 100%;
 }
 
+.message-display {
+    margin: 10px;
+    background-color: lightgrey;
+    padding: 5px;
+}
+
 .overlay-form {
     position: fixed; /* Sit on top of the page content */
     display: none; /* Hidden by default */
