@@ -18,11 +18,15 @@ Group Member is the default role when a new member is added to a project. They o
 
 ### Release Deadlines
 
-Release Deadlines are set and edited by either the Project Owner, or any Group Managers. Tasks are assigned to release deadlines. Project Owners and Group Managers are alerted to deadlines that have passed with tasks that are not yet complete.
+Release Deadlines are set and edited by either the Project Owner, or any Group Managers. Tasks are assigned to release deadlines.
 
 ### Tasks
 
 Tasks are created by any member working on the project. Fields include a title, description, and work status which starts as To Do and can be updated to In Progress and Done.
+
+### Activity Messages
+
+On the index page, users will see a list of messages giving them updates about activity that has taken place in any projects they are a part of. Activity includes creating deadlines or tasks, and adding, removing, promoting, or demoting members of the project group.
 
 ## Contents
 
