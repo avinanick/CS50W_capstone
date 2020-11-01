@@ -1,5 +1,12 @@
 {% extends 'project_manager/layout.html' %}
 
 {% block body %}
-TODO
+    {% for message in messages %}
+        <div class="message-display">
+            <p>{{ message.message }}</p>
+            <p>{{ message.date_created|date:"M/d/Y" }}</p>
+        </div>
+    {% empty %}
+        No Activity
+    {% endfor %}
 {% endblock %}
