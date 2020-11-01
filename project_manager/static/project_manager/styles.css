@@ -56,12 +56,13 @@
 }
 
 .task-col {
-    display: inline-grid;
+    float: left;
     margin-left: 20px;
     margin-right: 20px;
     background-color: white;
     width: 20%;
-    min-height: 500px;
+    min-height: 100px;
+    min-width: 150px;
 }
 
 .task-col * {
@@ -95,6 +96,12 @@
 
 #tasks-board {
     background-color: rgb(158, 158, 158);
+    min-width: 800px;
+    overflow-x: scroll;
     padding-top: 20px;
     padding-bottom: 20px;
+}
+
+#tasks-view > button {
+    margin-bottom: 50px;
 }
