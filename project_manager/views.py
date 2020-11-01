@@ -167,8 +167,18 @@ def members(request, project_id):
                     member=User.objects.get(username=data["username"]),
                     auth_level=Authority.objects.get(level="Member"))
                 new_membership.save()
+
+                new_activity_message = ActivityMessage(
+                    message= request.user.username + " added " + data["username"] + " to " + requested_project.name)
+                project_users = Membership.objects.filter(project=linked_project)
+                for project_user in project_users:
+                    new_activity_message.users.add(project_user)
+                new_activity_message.save()
+                
                 return JsonResponse({"message": "Member added to project"}, status=201)
-        
+            else:
+                return JsonResponse({"error": "Member does not exist", status=400})
+
         target_user = User.objects.get(username=data["username"])
 
         if data["member_edit"] == "remove":
@@ -176,6 +186,13 @@ def members(request, project_id):
             if target_membership.auth_level.level == "Manager" and member_check.auth_level.level != "Owner":
                 return JsonResponse({"error": "No authority for action"}, status=400)
             target_membership.delete()
+
+            new_activity_message = ActivityMessage(
+                message= request.user.username + " removed " + data["username"] + " from " + requested_project.name)
+            project_users = Membership.objects.filter(project=linked_project)
+            for project_user in project_users:
+                new_activity_message.users.add(project_user)
+            new_activity_message.save()
             return JsonResponse({"message": "Member removed from project"}, status=201)
 
         if data["member_edit"] == "promote":
@@ -184,6 +201,14 @@ def members(request, project_id):
             target_membership = Membership.objects.get(project=requested_project, member=target_user)
             target_membership.auth_level = Authority.objects.get(level="Manager")
             target_membership.save()
+
+            new_activity_message = ActivityMessage(
+                message= request.user.username + " promoted " + data["username"] + " to manager in " + requested_project.name)
+            project_users = Membership.objects.filter(project=linked_project)
+            for project_user in project_users:
+                new_activity_message.users.add(project_user)
+            new_activity_message.save()
+
             return JsonResponse({"message": "Member promoted to manager"}, status=201)
 
         if data["member_edit"] == "demote":
@@ -192,6 +217,14 @@ def members(request, project_id):
             target_membership = Membership.objects.get(project=requested_project, member=target_user)
             target_membership.auth_level = Authority.objects.get(level="Member")
             target_membership.save()
+
+            new_activity_message = ActivityMessage(
+                message= request.user.username + " demoted " + data["username"] + " to member in " + requested_project.name)
+            project_users = Membership.objects.filter(project=linked_project)
+            for project_user in project_users:
+                new_activity_message.users.add(project_user)
+            new_activity_message.save()
+
             return JsonResponse({"message": "Member demoted to member"}, status=201)
 
     all_members = Membership.objects.filter(project=requested_project)
