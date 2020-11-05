@@ -32,7 +32,8 @@ class CreateDeadlineForm extends React.Component {
     }
 
     handleChange(event) {
-        this.setState({date: event.target.value})
+        let new_date = new Date(event.target.value);
+        this.setState({date: new_date})
     }
 
     submit_response(event) {

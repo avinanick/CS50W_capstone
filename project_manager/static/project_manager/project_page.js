@@ -46,7 +46,8 @@ var CreateDeadlineForm = function (_React$Component) {
     _createClass(CreateDeadlineForm, [{
         key: 'handleChange',
         value: function handleChange(event) {
-            this.setState({ date: event.target.value });
+            var new_date = new Date(event.target.value);
+            this.setState({ date: new_date });
         }
     }, {
         key: 'submit_response',
