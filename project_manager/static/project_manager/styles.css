@@ -1,5 +1,6 @@
 .bottom-taskbar {
     background-color: gray;
+    display: flex;
     overflow: hidden;
     position: fixed;
     bottom: 0;
@@ -8,7 +9,8 @@
 }
 
 .bottom-taskbar button {
-    margin-left: 15%;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 10px;
 }
 
